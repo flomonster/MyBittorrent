@@ -1,0 +1,18 @@
+This is the list of features to implement:
+
+* Core features
+    * [x] Parse Bencode
+    * [x] Option pretty-print-torrent-file
+    * [ ] Option dump-peers
+  * Option verbose
+    * [ ] Tracker request
+    * [ ] Peer connection / disconnection
+    * [ ] Peer message
+  * Leeching
+    * [ ] Single-file torrents
+    * [ ] Multi-files torrents
+  * [ ] Seeding
+* Advanced features
+  * [ ] Multiple torrents
+  * [ ] Leech interruption
+  * [ ] DHT
