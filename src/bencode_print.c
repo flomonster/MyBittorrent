@@ -3,16 +3,50 @@
 #include <ctype.h>
 
 
+static const struct
+{
+  char c;
+  const char *eq;
+} g_mapping[] =
+{
+  { '\\', "\\\\"},
+  { '"', "\\\""},
+  { '/', "\\/"},
+  { '\b', "\\b"},
+  { '\f', "\\f"},
+  { '\n', "\\n"},
+  { '\r', "\\r"},
+  { '\t', "\\t"},
+};
+
+
+static void json_putchar(FILE *f, char c)
+{
+  if (!isprint(c))
+  {
+    unsigned char uc = c;
+    fprintf(f, "\\u00%02X", uc);
+  }
+  else
+  {
+    for (size_t i = 0; i < sizeof(g_mapping) / sizeof(*g_mapping); i++)
+      if (g_mapping[i].c == c)
+      {
+        fputs(g_mapping[i].eq, f);
+        return;
+      }
+    fputc(c, f);
+  }
+}
+
+
 static void bstr_print(FILE *f, const s_bdata *s)
 {
   const s_bstr *str = &s->data.str;
 
   fputc('"', f);
   for (size_t i = 0; i < str->size; i++)
-  {
-    char chr = str->data[i];
-    fprintf(f, isprint(chr) ? "%c" : "\\u00%02X", chr);
-  }
+    json_putchar(f, str->data[i]);
   fputc('"', f);
 }
 

@@ -118,7 +118,10 @@ static s_bdata *bencode_dict_parse(s_buf *buf)
   while (buf_peek(buf) != BUF_EOF)
   {
     if (buf_peek(buf) == 'e')
+    {
+      buf_pop(buf);
       return res;
+    }
 
     s_bdict *dcur = bdict_parse_item(buf);
     if (!dcur)
@@ -165,7 +168,10 @@ static s_bdata *bencode_list_parse(s_buf *buf)
   while (buf_peek(buf) != BUF_EOF)
   {
     if (buf_peek(buf) == 'e')
+    {
+      buf_pop(buf);
       return res;
+    }
 
     s_blist *dcur = blist_parse_item(buf);
     if (!dcur)
