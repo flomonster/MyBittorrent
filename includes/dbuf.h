@@ -4,15 +4,15 @@
 #include <stdbool.h>
 
 
-typedef struct buf
+typedef struct dbuf
 {
   char *data;
   size_t size;
-} s_buf;
+} s_dbuf;
 
 
 #define S_BUF(Data, Size)                      \
-  (s_buf)                                      \
+  (s_dbuf)                                      \
   {                                            \
     .data = (Data),                            \
     .size = (Size),                            \
@@ -20,6 +20,6 @@ typedef struct buf
 
 #define BUF_EOF (-1)
 
-int buf_peek(s_buf *buf);
-int buf_pop(s_buf *buf);
-bool buf_shrink(s_buf *buf, size_t off);
+int buf_peek(s_dbuf *buf);
+int buf_pop(s_dbuf *buf);
+bool buf_shrink(s_dbuf *buf, size_t off);

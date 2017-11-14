@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "buf.h"
+#include "dbuf.h"
 
 #include <stdio.h>
 
@@ -9,7 +9,7 @@
 typedef long t_bint;
 #define BINT_F "%ld"
 
-typedef s_buf s_bstr;
+typedef s_dbuf s_bstr;
 #define S_BSTR(Data, Size) S_BUF(Data, Size)
 
 
@@ -48,5 +48,5 @@ typedef struct bdata
 } s_bdata;
 
 
-s_bdata *bencode_parse(s_buf *buf);
+s_bdata *bencode_parse(s_dbuf *buf);
 void bdata_print(FILE *f, const s_bdata *benc);

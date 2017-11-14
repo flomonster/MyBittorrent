@@ -1,7 +1,7 @@
-#include "buf.h"
+#include "dbuf.h"
 
 
-bool buf_shrink(s_buf *buf, size_t off)
+bool buf_shrink(s_dbuf *buf, size_t off)
 {
   if (off > buf->size)
     return true;
@@ -12,13 +12,13 @@ bool buf_shrink(s_buf *buf, size_t off)
 }
 
 
-int buf_peek(s_buf *buf)
+int buf_peek(s_dbuf *buf)
 {
   return buf->size ? buf->data[0] : BUF_EOF;
 }
 
 
-int buf_pop(s_buf *buf)
+int buf_pop(s_dbuf *buf)
 {
   int res = buf_peek(buf);
   if (res == BUF_EOF)

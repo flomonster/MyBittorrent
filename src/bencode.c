@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 
-static bool parse_uint(t_bint *res, s_buf *buf, char stop)
+static bool parse_uint(t_bint *res, s_dbuf *buf, char stop)
 {
   *res = 0;
   while (buf->size)
@@ -25,7 +25,7 @@ static bool parse_uint(t_bint *res, s_buf *buf, char stop)
 }
 
 
-static bool parse_int(t_bint *res, s_buf *buf, char stop)
+static bool parse_int(t_bint *res, s_dbuf *buf, char stop)
 {
   bool sign;
   if ((sign = (buf_peek(buf) == '-')))
@@ -40,7 +40,7 @@ static bool parse_int(t_bint *res, s_buf *buf, char stop)
 
 
 
-static s_bdata *bencode_int_parse(s_buf *buf)
+static s_bdata *bencode_int_parse(s_dbuf *buf)
 {
   if (buf_pop(buf) != 'i')
     return NULL;
@@ -59,7 +59,7 @@ static s_bdata *bencode_int_parse(s_buf *buf)
 }
 
 
-static s_bdata *bencode_str_parse(s_buf *buf)
+static s_bdata *bencode_str_parse(s_dbuf *buf)
 {
   t_bint ssize;
   if (parse_uint(&ssize, buf, ':'))
@@ -81,7 +81,7 @@ static s_bdata *bencode_str_parse(s_buf *buf)
 }
 
 
-static s_bdict *bdict_parse_item(s_buf *buf)
+static s_bdict *bdict_parse_item(s_dbuf *buf)
 {
   s_bdata *key = bencode_str_parse(buf);
   if (!key)
@@ -102,7 +102,7 @@ static s_bdict *bdict_parse_item(s_buf *buf)
 }
 
 
-static s_bdata *bencode_dict_parse(s_buf *buf)
+static s_bdata *bencode_dict_parse(s_dbuf *buf)
 {
   if (buf_pop(buf) != 'd')
     return NULL;
@@ -136,7 +136,7 @@ static s_bdata *bencode_dict_parse(s_buf *buf)
 }
 
 
-static s_blist *blist_parse_item(s_buf *buf)
+static s_blist *blist_parse_item(s_dbuf *buf)
 {
   s_bdata *value = bencode_parse(buf);
   if (!value)
@@ -152,7 +152,7 @@ static s_blist *blist_parse_item(s_buf *buf)
 }
 
 
-static s_bdata *bencode_list_parse(s_buf *buf)
+static s_bdata *bencode_list_parse(s_dbuf *buf)
 {
   if (buf_pop(buf) != 'l')
     return NULL;
@@ -186,7 +186,7 @@ static s_bdata *bencode_list_parse(s_buf *buf)
 }
 
 
-s_bdata *bencode_parse(s_buf *buf)
+s_bdata *bencode_parse(s_dbuf *buf)
 {
   int cchr = buf_peek(buf);
   if (cchr == BUF_EOF)
