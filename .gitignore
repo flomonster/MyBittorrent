@@ -9,3 +9,21 @@
 *.d
 *.so
 *.out
+
+
+# AUTOTOOLS
+Makefile
+aclocal.m4
+/config.*
+/configure
+/depcomp
+/install-sh
+/missing
+/my-bittorrent
+/stamp-h1
+/compile
+
+*.cache
+*.deps
+*.dirstamp
+*.in
