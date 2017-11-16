@@ -49,4 +49,5 @@ typedef struct bdata
 
 
 s_bdata *bencode_parse(s_dbuf *buf);
+void bencode_free(s_bdata *benc);
 void bdata_print(FILE *f, const s_bdata *benc);
