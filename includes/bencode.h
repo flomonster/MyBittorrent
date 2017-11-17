@@ -51,3 +51,4 @@ typedef struct bdata
 s_bdata *bencode_parse(s_dbuf *buf);
 void bencode_free(s_bdata *benc);
 void bdata_print(FILE *f, const s_bdata *benc);
+s_bdata *bdict_find(s_bdict *dict, char *key);
