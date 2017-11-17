@@ -11,5 +11,5 @@ typedef struct peer
   bool interested;
   bool choked;
   bool choking;
-  struct sockadr_in adr;
+  struct sockaddr_in addr;
 } s_peer;
