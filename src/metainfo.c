@@ -3,10 +3,16 @@
 #include "sha.h"
 
 
-/* static bool metainfo_init_sha(s_metainfo *mi) */
-/* { */
-  
-/* } */
+static bool metainfo_init_sha(s_metainfo *mi)
+{
+  s_bdata *info = bdict_find(mi->bencoded->data.dict, "info");
+  if (!info)
+    return true;
+
+  SHA1(info->range.data, info->range.size, mi->sha);
+
+  return false;
+}
 
 
 bool metainfo_init(s_metainfo *mi, const char *path)
@@ -17,7 +23,7 @@ bool metainfo_init(s_metainfo *mi, const char *path)
   if (!(mi->bencoded = bencode_parse(mi->raw)))
     return true;
 
-  return false;
+  return metainfo_init_sha(mi);
 }
 
 
