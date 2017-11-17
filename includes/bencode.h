@@ -10,7 +10,7 @@ typedef long t_bint;
 #define BINT_F "%ld"
 
 typedef s_dbuf s_bstr;
-#define S_BSTR(Data, Size) S_BUF(Data, Size)
+#define S_BSTR(Data, Size) S_DBUF(Data, Size)
 
 
 typedef struct bdict

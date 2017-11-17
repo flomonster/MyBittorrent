@@ -11,8 +11,8 @@ typedef struct dbuf
 } s_dbuf;
 
 
-#define S_BUF(Data, Size)                      \
-  (s_dbuf)                                      \
+#define S_DBUF(Data, Size)                     \
+  (s_dbuf)                                     \
   {                                            \
     .data = (Data),                            \
     .size = (Size),                            \
