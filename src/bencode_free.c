@@ -7,6 +7,8 @@ static void bencode_free_dict(s_bdict *l)
   for (s_bdict *p = NULL; l || p; p = l, !l || (l = l->next))
   {
     free(p);
+    if (!l)
+      continue;
     bencode_free(l->key);
     bencode_free(l->value);
   }
@@ -18,7 +20,8 @@ static void bencode_free_list(s_blist *l)
   for (s_blist *p = NULL; l || p; p = l, !l || (l = l->next))
   {
     free(p);
-    bencode_free(l->value);
+    if (l)
+      bencode_free(l->value);
   }
 }
 
