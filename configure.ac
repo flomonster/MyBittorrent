@@ -7,7 +7,7 @@ AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
 
 AC_PROG_CC_C99
 
-AX_CHECK_OPENSSL( , [AC_MSG_ERROR([Missing required openssl])])
+AX_CHECK_OPENSSL()
 
 LIBCURL_CHECK_CONFIG(, [7], ,
                      [AC_MSG_ERROR([Missing required libcurl >= 7])])
