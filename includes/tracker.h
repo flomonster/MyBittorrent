@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bencode.h"
+
 typedef struct tracker
 {
   /**
@@ -8,3 +10,6 @@ typedef struct tracker
   */
   char *url;
 } s_tracker;
+
+
+s_tracker *tracker_create(b_data *bencode);
