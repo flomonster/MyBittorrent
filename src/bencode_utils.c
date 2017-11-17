@@ -50,7 +50,8 @@ void bencode_free(s_bdata *benc)
 
 s_bdata *bdict_find(s_bdict *dict, char *key)
 {
-  while (dict && strcmp(dict->key->data.str.data, key))
+  while (dict && strncmp(dict->key->data.str.data,
+                         key, dict->key->data.str.size))
     dict = dict->next;
 
   if (dict)
