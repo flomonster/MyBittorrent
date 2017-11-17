@@ -5,6 +5,10 @@
 #include <string.h>
 
 
+// dest_parse modifies its target buffer metadata
+static s_bdata *bencode_dest_parse(s_dbuf *buf);
+
+
 static bool parse_uint(t_bint *res, s_dbuf *buf, char stop)
 {
   *res = 0;
@@ -88,7 +92,7 @@ static s_bdict *bdict_parse_item(s_dbuf *buf)
   if (!key)
     return NULL;
 
-  s_bdata *value = bencode_parse(buf);
+  s_bdata *value = bencode_dest_parse(buf);
   if (!value)
     return NULL;
 
@@ -139,7 +143,7 @@ static s_bdata *bencode_dict_parse(s_dbuf *buf)
 
 static s_blist *blist_parse_item(s_dbuf *buf)
 {
-  s_bdata *value = bencode_parse(buf);
+  s_bdata *value = bencode_dest_parse(buf);
   if (!value)
     return NULL;
 
@@ -187,7 +191,7 @@ static s_bdata *bencode_list_parse(s_dbuf *buf)
 }
 
 
-s_bdata *bencode_parse(s_dbuf *buf)
+static s_bdata *bencode_dest_parse(s_dbuf *buf)
 {
   int cchr = buf_peek(buf);
   if (cchr == BUF_EOF)
@@ -214,4 +218,11 @@ s_bdata *bdict_find(s_bdict *dict, char *key)
     return dict->value;
 
   return NULL;
+}
+
+
+s_bdata *bencode_parse(const s_dbuf *buf)
+{
+  s_dbuf buf_cpy = *buf;
+  return bencode_dest_parse(&buf_cpy);
 }
