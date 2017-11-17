@@ -1,6 +1,10 @@
 #pragma once
 
+#include <stdbool.h>
+
 #include "bencode.h"
+#include "metainfo.h"
+
 
 typedef struct tracker
 {
@@ -12,4 +16,4 @@ typedef struct tracker
 } s_tracker;
 
 
-s_tracker *tracker_create(b_data *bencode);
+bool tracker_init(s_tracker *tracker, s_metainfo *mi);
