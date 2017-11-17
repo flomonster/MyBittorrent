@@ -45,6 +45,7 @@ typedef struct bdata
     s_bdict *dict;
     s_blist *list;
   } data;
+  s_dbuf range;
 } s_bdata;
 
 

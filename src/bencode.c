@@ -118,8 +118,7 @@ static s_bdata *bencode_dict_parse(s_dbuf *buf)
   res->type = BDICT;
   res->data.dict = NULL;
 
-  s_bdict **ip = &res->data.dict;
-  while (buf_peek(buf) != BUF_EOF)
+  for (s_bdict **ip = &res->data.dict; buf_peek(buf) != BUF_EOF;)
   {
     if (buf_peek(buf) == 'e')
     {
@@ -192,19 +191,23 @@ static s_bdata *bencode_list_parse(s_dbuf *buf)
 
 static s_bdata *bencode_dest_parse(s_dbuf *buf)
 {
+  char *buf_beg = buf->data;
   int cchr = buf_peek(buf);
   if (cchr == BUF_EOF)
     return NULL;
 
+  s_bdata *res;
   if (cchr == 'l')
-    return bencode_list_parse(buf);
+    res = bencode_list_parse(buf);
   if (cchr == 'd')
-    return bencode_dict_parse(buf);
+    res = bencode_dict_parse(buf);
   if (cchr == 'i')
-    return bencode_int_parse(buf);
+    res = bencode_int_parse(buf);
   if (cchr >= '0' && cchr <= '9')
-    return bencode_str_parse(buf);
-  return NULL;
+    res = bencode_str_parse(buf);
+  if (res)
+    res->range = S_DBUF(buf_beg, buf->data - buf_beg);
+  return res;
 }
 
 
