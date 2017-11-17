@@ -20,6 +20,9 @@ static const struct
 };
 
 
+static void bdata_print_ol(FILE *f, const s_bdata *benc);
+
+
 static void json_putchar(FILE *f, char c)
 {
   if (!isprint(c))
@@ -62,7 +65,7 @@ static void blist_print(FILE *f, const s_bdata *s)
   fputc('[', f);
   for (s_blist *list = s->data.list; list; list = list->next)
   {
-    bdata_print(f, list->value);
+    bdata_print_ol(f, list->value);
     if (list->next)
       fputc(',', f);
   }
@@ -75,9 +78,9 @@ static void bdict_print(FILE *f, const s_bdata *s)
   fputc('{', f);
   for (s_bdict *dict = s->data.dict; dict; dict = dict->next)
   {
-    bdata_print(f, dict->key);
+    bdata_print_ol(f, dict->key);
     fputc(':', f);
-    bdata_print(f, dict->value);
+    bdata_print_ol(f, dict->value);
     if (dict->next)
       fputc(',', f);
   }
@@ -85,7 +88,7 @@ static void bdict_print(FILE *f, const s_bdata *s)
 }
 
 
-void bdata_print(FILE *f, const s_bdata *benc)
+static void bdata_print_ol(FILE *f, const s_bdata *benc)
 {
   switch (benc->type)
   {
@@ -102,4 +105,11 @@ void bdata_print(FILE *f, const s_bdata *benc)
     blist_print(f, benc);
     break;
   }
+}
+
+
+void bdata_print(FILE *f, const s_bdata *benc)
+{
+  bdata_print_ol(f, benc);
+  fputc('\n', f);
 }
