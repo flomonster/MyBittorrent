@@ -1,5 +1,7 @@
-#include "bencode.h"
 #include <stdlib.h>
+#include <string.h>
+
+#include "bencode.h"
 
 
 static void bencode_free_dict(s_bdict *l)
@@ -43,4 +45,16 @@ void bencode_free(s_bdata *benc)
     break;
   }
   free(benc);
+}
+
+
+s_bdata *bdict_find(s_bdict *dict, char *key)
+{
+  while (dict && strcmp(dict->key->data.str.data, key))
+    dict = dict->next;
+
+  if (dict)
+    return dict->value;
+
+  return NULL;
 }

@@ -2,7 +2,6 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
 
 
 // dest_parse modifies its target buffer metadata
@@ -205,18 +204,6 @@ static s_bdata *bencode_dest_parse(s_dbuf *buf)
     return bencode_int_parse(buf);
   if (cchr >= '0' && cchr <= '9')
     return bencode_str_parse(buf);
-  return NULL;
-}
-
-
-s_bdata *bdict_find(s_bdict *dict, char *key)
-{
-  while (dict && strcmp(dict->key->data.str.data, key))
-    dict = dict->next;
-
-  if (dict)
-    return dict->value;
-
   return NULL;
 }
 
