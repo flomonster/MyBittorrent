@@ -1,5 +1,8 @@
+ACLOCAL_AMFLAGS = -I m4
+
 bin_PROGRAMS = my-bittorrent
 
+my_bittorrent_LDADD = -lcurl
 my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/dbuf.c includes/bencode.h \
                         includes/dbuf.h includes/file.h includes/filelist.h \
