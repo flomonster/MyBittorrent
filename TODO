@@ -3,7 +3,7 @@ This is the list of features to implement:
 * Core features
     * [x] Parse Bencode
     * [x] Option pretty-print-torrent-file
-    * [ ] Option dump-peers
+    * [x] Option dump-peers
   * Option verbose
     * [ ] Tracker request
     * [ ] Peer connection / disconnection
