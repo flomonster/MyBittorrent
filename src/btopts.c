@@ -14,8 +14,18 @@ static struct option g_long_options[] =
   {"pretty-print-torrent-file", no_argument, &g_btopts.btmode, METAINFO_PRINT},
   {"dump-peers",                no_argument, &g_btopts.btmode, DUMP_PEERS},
   {"seed",                      no_argument, &g_btopts.seed,   true},
+  {"help",                      no_argument, 0,                'h'},
   {0, 0, 0, 0}
 };
+
+
+static void print_help(int argc, char *argv[])
+{
+  printf("Usage: %s [--verbose] [--seed] COMMAND\n"
+         "where  COMMAND := { --dump-peers | --pretty-print-torrent-file | "
+         "{ torrents } }\n",
+         argv[0]);
+}
 
 
 int btopts_parse(int argc, char *argv[])
@@ -23,16 +33,19 @@ int btopts_parse(int argc, char *argv[])
   int opt_i = 0;
   int c;
 
-  while ((c = getopt_long(argc, argv, "", g_long_options, &opt_i)) != -1)
+  while ((c = getopt_long(argc, argv, "h", g_long_options, &opt_i)) != -1)
     switch (c)
     {
     case 0:
       break;
+    case 'h':
+      print_help(argc, argv);
+      return -1;
     default:
       /* on error or unexpected code,
       ** let the caller cleanup
       */
-      return -1;
+      return -2;
     }
 
   // optind is the internal getopt cursor
