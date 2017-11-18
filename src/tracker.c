@@ -15,3 +15,9 @@ bool tracker_init(s_tracker *tracker, s_metainfo *mi)
     return true;
   return false;
 }
+
+
+void tracker_destroy(s_tracker *tracker)
+{
+  free(tracker->url);
+}

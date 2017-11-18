@@ -17,3 +17,4 @@ typedef struct tracker
 
 
 bool tracker_init(s_tracker *tracker, s_metainfo *mi);
+void tracker_destroy(s_tracker *tracker);
