@@ -27,20 +27,20 @@ s_torrent *torrent_create(const char *path)
 {
   s_torrent *torrent = malloc(sizeof (s_torrent));
   if (!torrent)
-    err(1, "torrent_create: malloc failed");
+    errx(1, "torrent_create: malloc failed");
 
   torrent->peers = NULL;
 
   if (metainfo_init(&torrent->metainfo, path))
-    err(2, "torrent_create: metainfo_init failed");
+    errx(2, "torrent_create: metainfo_init failed");
 
   if (tracker_init(&torrent->tracker, &torrent->metainfo))
-    err(2, "torrent_create: tracker_init failed");
+    errx(2, "torrent_create: tracker_init failed");
 
   torrent->state = T_STARTING;
 
   if (server_init(&torrent->server))
-    err(2, "torrent_create: server_init failse");
+    errx(2, "torrent_create: server_init failse");
 
   peer_id_gen(torrent->peer_id);
   torrent->pieces = NULL;
