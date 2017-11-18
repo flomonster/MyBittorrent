@@ -1,12 +1,19 @@
 #pragma once
 
 
+typedef enum btmode
+{
+  TORRENT_MODE,
+  METAINFO_PRINT,
+  DUMP_PEERS,
+} e_btmode;
+
+
 struct btopts
 {
   int verbose;
-  int metainfo_print;
-  int dump_peers;
   int seed;
+  int btmode;
 };
 
 

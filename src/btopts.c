@@ -1,6 +1,8 @@
-#include "btopts.h"
 #include <getopt.h>
 #include <stdbool.h>
+#include <stdio.h>
+
+#include "btopts.h"
 
 
 struct btopts g_btopts;
@@ -8,10 +10,10 @@ struct btopts g_btopts;
 
 static struct option g_long_options[] =
 {
-  {"verbose",                   no_argument, &g_btopts.verbose,        true},
-  {"pretty-print-torrent-file", no_argument, &g_btopts.metainfo_print, true},
-  {"dump-peers",                no_argument, &g_btopts.dump_peers,     true},
-  {"seed",                      no_argument, &g_btopts.seed,           true},
+  {"verbose",                   no_argument, &g_btopts.verbose, true},
+  {"pretty-print-torrent-file", no_argument, &g_btopts.btmode, METAINFO_PRINT},
+  {"dump-peers",                no_argument, &g_btopts.btmode, DUMP_PEERS},
+  {"seed",                      no_argument, &g_btopts.seed,   true},
   {0, 0, 0, 0}
 };
 
