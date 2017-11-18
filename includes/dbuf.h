@@ -20,6 +20,8 @@ typedef struct dbuf
 
 #define BUF_EOF (-1)
 
+
+s_dbuf *dbuf_create(size_t size);
 int buf_peek(s_dbuf *buf);
 int buf_pop(s_dbuf *buf);
 bool buf_shrink(s_dbuf *buf, size_t off);

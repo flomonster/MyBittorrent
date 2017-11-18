@@ -1,4 +1,22 @@
+#include <stdlib.h>
+
 #include "dbuf.h"
+
+
+s_dbuf *dbuf_create(size_t size)
+{
+  s_dbuf *ret = malloc(sizeof(*ret));
+  if (!ret)
+    return NULL;
+
+  if (!((ret->data = malloc(size)) || !size))
+  {
+    free(ret);
+    return NULL;
+  }
+  ret->size = size;
+  return ret;
+}
 
 
 bool buf_shrink(s_dbuf *buf, size_t off)
