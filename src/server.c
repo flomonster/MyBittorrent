@@ -5,7 +5,7 @@
 #include "server.h"
 
 
-bool *server_init(s_server *server)
+bool server_init(s_server *server)
 {
   server->port = 0;
 

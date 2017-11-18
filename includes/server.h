@@ -10,4 +10,4 @@ typedef struct server
 } s_server;
 
 
-bool *server_init(s_server *server);
+bool server_init(s_server *server);
