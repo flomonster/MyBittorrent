@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "announce.h"
 #include "dbuf.h"
 #include "metainfo.h"
 #include "torrent.h"
-
 
 
 static size_t buf_write_callback(void *contents, size_t wsize,
@@ -28,7 +28,8 @@ static size_t buf_write_callback(void *contents, size_t wsize,
   return wsize;
 }
 
-static bool tracker_announce_url(CURL *curl, char *url)
+
+static s_dbuf *tracker_announce_url(CURL *curl, char *url)
 {
   CURLcode res;
   s_dbuf *buf = dbuf_create(0);
@@ -39,38 +40,76 @@ static bool tracker_announce_url(CURL *curl, char *url)
 
   res = curl_easy_perform(curl);
 
-  if (res != CURLE_OK)
-    warnx("curl_easy_perform() failed: %s",
-          curl_easy_strerror(res));
+  if (res == CURLE_OK)
+    return buf;
 
-  return res != CURLE_OK;
+  warnx("curl_easy_perform() failed: %s",
+        curl_easy_strerror(res));
+
+  dbuf_free(buf);
+  return NULL;
 }
 
 
-static bool tracker_announce_sub(CURL *curl, s_torrent *tor)
+static s_dbuf *tracker_announce_sub(CURL *curl, s_torrent *tor)
 {
   char url[2000];
   char *info_hash = curl_easy_escape(curl, tor->metainfo.sha,
                                      SHA_DIGEST_LENGTH);
-  sprintf(url, "%s?peer_id=%s"
+  sprintf(url, "%s?peer_id=%.20s"
           "&info_hash=%s"
           "&port=6881&left=1501102080&downloaded=100"
-          "&uploaded=0&compact=1&event=started", tor->tracker.url, tor->peer_id, info_hash);
+          "&uploaded=0&compact=1&event=started",
+          tor->tracker.url, tor->peer_id, info_hash);
   curl_free(info_hash);
-  tracker_announce_url(curl, url);
-  return false;
+  return tracker_announce_url(curl, url);
 }
 
-bool tracker_announce(s_torrent *tor)
+
+s_dbuf *tracker_announce_raw(s_torrent *tor)
 {
   CURL *curl = curl_easy_init();
   if (!curl)
   {
     warnx("could not initialize curl");
-    return true;
+    return NULL;
   }
 
-  bool res = tracker_announce_sub(curl, tor);
+  s_dbuf *res = tracker_announce_sub(curl, tor);
   curl_easy_cleanup(curl);
   return res;
+}
+
+
+s_announce *tracker_announce(s_torrent *tor)
+{
+  s_dbuf *raw = tracker_announce_raw(tor);
+  if (!raw)
+    return NULL;
+
+  s_bdata *bencoded = bencode_parse(raw);
+  if (!bencoded)
+  {
+    dbuf_free(raw);
+    return NULL;
+  }
+
+  s_announce *ret = malloc(sizeof(*ret));
+  if (!ret)
+    return NULL;
+
+  ret->raw = raw;
+  ret->bencoded = bencoded;
+  return ret;
+}
+
+
+void announce_free(s_announce *announce)
+{
+  if (!announce)
+    return;
+
+  dbuf_free(announce->raw);
+  bencode_free(announce->bencoded);
+  free(announce);
 }

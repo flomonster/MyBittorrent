@@ -5,4 +5,12 @@
 #include "torrent.h"
 
 
-bool tracker_announce(s_torrent *tor);
+typedef struct announce
+{
+  s_dbuf *raw;
+  s_bdata *bencoded;
+} s_announce;
+
+
+s_announce *tracker_announce(s_torrent *tor);
+void announce_free(s_announce *announce);
