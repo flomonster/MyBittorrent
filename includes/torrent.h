@@ -30,3 +30,4 @@ typedef struct torrent
 } s_torrent;
 
 s_torrent *torrent_create(const char *path);
+void torrent_free(s_torrent *tor);

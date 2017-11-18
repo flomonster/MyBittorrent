@@ -47,3 +47,11 @@ s_torrent *torrent_create(const char *path)
 
   return torrent;
 }
+
+
+void torrent_free(s_torrent *tor)
+{
+  metainfo_destroy(&tor->metainfo);
+  tracker_destroy(&tor->tracker);
+  free(tor);
+}
