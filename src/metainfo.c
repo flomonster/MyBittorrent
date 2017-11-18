@@ -27,7 +27,7 @@ bool metainfo_init(s_metainfo *mi, const char *path)
 }
 
 
-bool metainfo_destroy(s_metainfo *mi)
+void metainfo_destroy(s_metainfo *mi)
 {
   bencode_free(mi->bencoded);
   funmap(mi->raw);
