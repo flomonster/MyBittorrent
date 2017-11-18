@@ -40,10 +40,13 @@ s_torrent *torrent_create(const char *path)
   torrent->state = T_STARTING;
 
   if (server_init(&torrent->server))
-    errx(2, "torrent_create: server_init failse");
+    errx(2, "torrent_create: server_init failed");
 
   peer_id_gen(torrent->peer_id);
   torrent->pieces = NULL;
+
+  if (filelist_init(&torrent->filelist, torrent->metainfo.bencoded))
+    errx(2, "torrent_create: filelist_init failed");
 
   return torrent;
 }

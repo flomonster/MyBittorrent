@@ -27,6 +27,7 @@ typedef struct torrent
   s_server server;
   t_peer_id peer_id;
   s_piece *pieces;
+  s_filelist filelist;
 } s_torrent;
 
 s_torrent *torrent_create(const char *path);
