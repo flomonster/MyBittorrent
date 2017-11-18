@@ -15,8 +15,13 @@ int main(int argc, char *argv[])
   for (int i = torstart; i < argc; i++)
   {
     s_torrent *tor = torrent_create(argv[i]);
-    printf("%d\n", tracker_announce(tor));
-    //bdata_print(stdout, tor->metainfo.bencoded);
+    s_announce *ann = tracker_announce(tor);
+    if (!ann)
+      printf("cannot fetch announcement\n");
+    else
+      bdata_print(stdout, ann->bencoded);
+    announce_free(ann);
+    torrent_free(tor);
   }
 
   return EXIT_SUCCESS;
