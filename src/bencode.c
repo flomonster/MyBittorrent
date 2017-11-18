@@ -204,7 +204,7 @@ static s_bdata *bencode_dest_parse(s_dbuf *buf)
   if (cchr == BUF_EOF)
     return NULL;
 
-  s_bdata *res;
+  s_bdata *res = NULL;
   if (cchr == 'l')
     res = bencode_list_parse(buf);
   if (cchr == 'd')

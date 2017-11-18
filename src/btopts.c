@@ -19,12 +19,12 @@ static struct option g_long_options[] =
 };
 
 
-static void print_help(int argc, char *argv[])
+static void print_help(char *pname)
 {
   printf("Usage: %s [--verbose] [--seed] COMMAND\n"
          "where  COMMAND := { --dump-peers | --pretty-print-torrent-file | "
          "{ torrents } }\n",
-         argv[0]);
+         pname);
 }
 
 
@@ -39,7 +39,7 @@ int btopts_parse(int argc, char *argv[])
     case 0:
       break;
     case 'h':
-      print_help(argc, argv);
+      print_help(argv[0]);
       return -1;
     default:
       /* on error or unexpected code,

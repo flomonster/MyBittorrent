@@ -9,7 +9,9 @@ static bool metainfo_init_sha(s_metainfo *mi)
   if (!info)
     return true;
 
-  SHA1(info->range.data, info->range.size, mi->sha);
+  void *data = info->range.data;
+  void *res = mi->sha;
+  SHA1(data, info->range.size, res);
 
   return false;
 }
