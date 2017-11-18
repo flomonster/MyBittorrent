@@ -17,6 +17,8 @@ my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/file.c includes/file.h \
                         src/filelist.c includes/filelist.h \
                         src/path.c includes/path.h \
-                        src/announce.c includes/announce.h
+                        src/announce.c includes/announce.h \
+                        src/log.c src/log.h
+
 AM_CPPFLAGS = -iquote includes -D_POSIX_C_SOURCE=200809L
 AM_CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic

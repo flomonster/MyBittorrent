@@ -1,8 +1,10 @@
 #include <getopt.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "btopts.h"
+#include "log.h"
 
 
 struct btopts g_btopts;
@@ -10,7 +12,8 @@ struct btopts g_btopts;
 
 static struct option g_long_options[] =
 {
-  {"verbose",                   no_argument, &g_btopts.verbose, true},
+  {"fancy",                     no_argument, 0, 'f'},
+  {"verbose",                   optional_argument, 0, 'v'},
   {"pretty-print-torrent-file", no_argument, &g_btopts.btmode, METAINFO_PRINT},
   {"dump-peers",                no_argument, &g_btopts.btmode, DUMP_PEERS},
   {"seed",                      no_argument, &g_btopts.seed,   true},
@@ -33,10 +36,18 @@ int btopts_parse(int argc, char *argv[])
   int opt_i = 0;
   int c;
 
-  while ((c = getopt_long(argc, argv, "h", g_long_options, &opt_i)) != -1)
+  btlog_init();
+  while ((c = getopt_long(argc, argv, "fhv::", g_long_options, &opt_i)) != -1)
     switch (c)
     {
     case 0:
+      break;
+    case 'v':
+      g_log_config.level = optarg ? strtoul(optarg, NULL, 10) : VERBOSE_LOGLEVEL;
+      break;
+    case 'f':
+      g_log_config.fancy = true;
+      g_log_config.mask = LOGMASK_FANCY;
       break;
     case 'h':
       print_help(argv[0]);

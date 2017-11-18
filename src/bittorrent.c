@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "log.h"
 #include "btopts.h"
 #include "announce.h"
 #include "torrent.h"
@@ -69,6 +70,10 @@ int main(int argc, char *argv[])
     // exit when torstart < 0,
     // but succeed when torstart == -1
     return torstart + 1;
+
+  btlog(&LCTX(L_INFO, "main"), NULL, "starting info");
+  btlog(&LCTX(L_ERR, "main"), NULL, "starting err");
+  btlog(&LCTX(L_WARN, "main"), NULL, "starting warn");
 
   argc -= torstart;
   argv += torstart;

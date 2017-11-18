@@ -11,7 +11,6 @@ typedef enum btmode
 
 struct btopts
 {
-  int verbose;
   int seed;
   int btmode;
 };
