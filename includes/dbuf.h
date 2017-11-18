@@ -21,6 +21,7 @@ typedef struct dbuf
 #define BUF_EOF (-1)
 
 
+void dbuf_free(s_dbuf *buf);
 s_dbuf *dbuf_create(size_t size);
 int buf_peek(s_dbuf *buf);
 int buf_pop(s_dbuf *buf);

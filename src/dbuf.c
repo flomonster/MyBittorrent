@@ -19,6 +19,14 @@ s_dbuf *dbuf_create(size_t size)
 }
 
 
+void dbuf_free(s_dbuf *buf)
+{
+  if (buf)
+    free(buf->data);
+  free(buf);
+}
+
+
 bool buf_shrink(s_dbuf *buf, size_t off)
 {
   if (off > buf->size)
