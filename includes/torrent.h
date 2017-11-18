@@ -4,11 +4,10 @@
 #include "filelist.h"
 #include "metainfo.h"
 #include "peer.h"
+#include "peerlist.h"
 #include "piece.h"
 #include "server.h"
 #include "tracker.h"
-
-typedef char t_peer_id[20];
 
 typedef enum torrent_state
 {
@@ -20,7 +19,7 @@ typedef enum torrent_state
 
 typedef struct torrent
 {
-  s_peer *peers;
+  s_peerlist peerlist;
   s_tracker tracker;
   s_metainfo metainfo;
   e_torrent_state state;
@@ -30,5 +29,5 @@ typedef struct torrent
   s_filelist filelist;
 } s_torrent;
 
-s_torrent *torrent_create(const char *path);
+s_torrent *torrent_create(const char *path, bool init_arch);
 void torrent_free(s_torrent *tor);

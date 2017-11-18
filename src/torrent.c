@@ -23,13 +23,13 @@ static  void peer_id_gen(t_peer_id pi)
   memcpy(pi, PEER_ID_BEGIN, sizeof(PEER_ID_BEGIN) - 1);
 }
 
-s_torrent *torrent_create(const char *path)
+s_torrent *torrent_create(const char *path, bool init_arch)
 {
   s_torrent *torrent = malloc(sizeof (s_torrent));
   if (!torrent)
     errx(1, "torrent_create: malloc failed");
 
-  torrent->peers = NULL;
+  torrent->peerlist.peers = NULL;
 
   if (metainfo_init(&torrent->metainfo, path))
     errx(2, "torrent_create: metainfo_init failed");
@@ -45,7 +45,7 @@ s_torrent *torrent_create(const char *path)
   peer_id_gen(torrent->peer_id);
   torrent->pieces = NULL;
 
-  if (filelist_init(&torrent->filelist, torrent->metainfo.bencoded))
+  if (init_arch && filelist_init(&torrent->filelist, torrent->metainfo.bencoded))
     errx(2, "torrent_create: filelist_init failed");
 
   return torrent;
