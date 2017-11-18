@@ -18,10 +18,9 @@ static  void peer_id_gen(t_peer_id pi)
   const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                          "0123456789";
 
-	for (size_t i = 0; i < sizeof (t_peer_id); i++)
-		pi[i] = charset[rand() % sizeof (charset)];
-  pi[sizeof (t_peer_id) - 1] = '\0';
-  strcpy(pi, PEER_ID_BEGIN);
+  for (size_t i = 0; i < sizeof (t_peer_id); i++)
+    pi[i] = charset[rand() % sizeof (charset)];
+  memcpy(pi, PEER_ID_BEGIN, sizeof(PEER_ID_BEGIN) - 1);
 }
 
 s_torrent *torrent_create(const char *path)

@@ -8,7 +8,7 @@
 #include "server.h"
 #include "tracker.h"
 
-typedef char t_peer_id[21];
+typedef char t_peer_id[20];
 
 typedef enum torrent_state
 {
