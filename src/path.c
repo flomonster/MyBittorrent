@@ -45,13 +45,23 @@ void *path_map(s_path *path, size_t size, int dir_fd)
     int fd = openat(dir_fd, path->name, O_CREAT | O_RDWR, 0644);
     if (fd < 0)
       return NULL;
+
+    if (posix_fallocate(fd, 0, size))
+    {
+      close(fd);
+      return NULL;
+    }
+
     void *res = mmap(NULL, size, PROT_WRITE | PROT_READ, MAP_PRIVATE, fd, 0);
     return res == MAP_FAILED ? NULL : res;
   }
+
   int next_fd = openat(dir_fd, path->name, O_DIRECTORY, 0750);
   if (next_fd < 0)
     return NULL;
+
   void *res = path_map(path->next, size, next_fd);
+
   if (close(next_fd) < 0)
     return NULL;
   return res;
