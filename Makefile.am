@@ -11,5 +11,6 @@ my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/fmap.c includes/metainfo.h src/metainfo.c \
                         src/torrent.c includes/torrent.h \
                         src/tracker.c includes/tracker.h \
-												src/server.c includes/server.h
+                        src/server.c includes/server.h \
+                        src/announce.c
 AM_CPPFLAGS = -iquote includes

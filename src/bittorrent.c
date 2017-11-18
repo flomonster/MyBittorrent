@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 #include "btopts.h"
-#include "fmap.h"
-#include "metainfo.h"
+#include "announce.h"
+#include "torrent.h"
 
 
 int main(int argc, char *argv[])
@@ -14,12 +14,9 @@ int main(int argc, char *argv[])
 
   for (int i = torstart; i < argc; i++)
   {
-    s_metainfo mi;
-    metainfo_init(&mi, argv[i]);
-
-    bdata_print(stdout, mi.bencoded);
-
-    metainfo_destroy(&mi);
+    s_torrent *tor = torrent_create(argv[i]);
+    printf("%d\n", tracker_announce(tor));
+    //bdata_print(stdout, tor->metainfo.bencoded);
   }
 
   return EXIT_SUCCESS;
