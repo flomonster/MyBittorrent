@@ -21,10 +21,17 @@ typedef struct bdict
 } s_bdict;
 
 
-typedef struct blist
+typedef struct blist_node
 {
   struct bdata *value;
-  struct blist *next;
+  struct blist_node *next;
+} s_blist_node;
+
+
+typedef struct blist
+{
+  s_blist_node *tail;
+  size_t size;
 } s_blist;
 
 

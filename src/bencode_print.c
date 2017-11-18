@@ -63,10 +63,11 @@ static void bint_print(FILE *f, const s_bdata *s)
 static void blist_print(FILE *f, const s_bdata *s)
 {
   fputc('[', f);
-  for (s_blist *list = s->data.list; list; list = list->next)
+  s_blist *list = s->data.list;
+  for (s_blist_node *node = list->tail; node; node = node->next)
   {
-    bdata_print_ol(f, list->value);
-    if (list->next)
+    bdata_print_ol(f, node->value);
+    if (node->next)
       fputc(',', f);
   }
   fputc(']', f);

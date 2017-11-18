@@ -17,14 +17,16 @@ static void bencode_free_dict(s_bdict *l)
 }
 
 
-static void bencode_free_list(s_blist *l)
+static void bencode_free_list(s_blist *list)
 {
-  for (s_blist *p = NULL; l || p; p = l, !l || (l = l->next))
+  s_blist_node *l = list->tail;
+  for (s_blist_node *p = NULL; l || p; p = l, !l || (l = l->next))
   {
     free(p);
     if (l)
       bencode_free(l->value);
   }
+  free(list);
 }
 
 

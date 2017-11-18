@@ -139,13 +139,13 @@ static s_bdata *bencode_dict_parse(s_dbuf *buf)
 }
 
 
-static s_blist *blist_parse_item(s_dbuf *buf)
+static s_blist_node *blist_parse_item(s_dbuf *buf)
 {
   s_bdata *value = bencode_dest_parse(buf);
   if (!value)
     return NULL;
 
-  s_blist *res = malloc(sizeof(*res));
+  s_blist_node *res = malloc(sizeof(*res));
   if (!res)
     return NULL;
 
@@ -165,9 +165,16 @@ static s_bdata *bencode_list_parse(s_dbuf *buf)
     return NULL;
 
   res->type = BLIST;
-  res->data.list = NULL;
+  res->data.list = malloc(sizeof(s_blist));
+  if (!res->data.list)
+  {
+    free(res);
+    return NULL;
+  }
+  res->data.list->tail = NULL;
+  res->data.list->size = 0;
 
-  s_blist **ip = &res->data.list;
+  s_blist_node **ip = &res->data.list->tail;
   while (buf_peek(buf) != BUF_EOF)
   {
     if (buf_peek(buf) == 'e')
@@ -176,7 +183,7 @@ static s_bdata *bencode_list_parse(s_dbuf *buf)
       return res;
     }
 
-    s_blist *dcur = blist_parse_item(buf);
+    s_blist_node *dcur = blist_parse_item(buf);
     if (!dcur)
     {
       free(res);
@@ -184,6 +191,7 @@ static s_bdata *bencode_list_parse(s_dbuf *buf)
     }
     *ip = dcur;
     ip = &dcur->next;
+    res->data.list->size++;
   }
   return NULL;
 }
