@@ -31,6 +31,7 @@ static bool multifile_init(s_filelist *filelist, s_bdata *bfiles)
     return true;
 
   s_blist_node *bfile = bfiles->data.list->tail;
+  size_t offset = 0;
   for (size_t i = 0; i < filelist->nbfiles; i++)
   {
     size_t size = bdict_find(bfile->value->data.dict, "length")->data.i;
@@ -45,8 +46,9 @@ static bool multifile_init(s_filelist *filelist, s_bdata *bfiles)
       curpath = curpath->next;
       bdir = bdir->next;
     }
-    if (file_init(filelist->files + i, path, size, 0))
+    if (file_init(filelist->files + i, path, size, offset))
       return true;
+    offset += size;
     bfile = bfile->next;
   }
   return false;
