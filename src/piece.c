@@ -5,7 +5,9 @@
 #include "bencode.h"
 #include "filelist.h"
 #include "piece.h"
+#include "torrent.h"
 
+#define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
 
 static void piece_init(s_piece *piece, size_t file, size_t size, char *sha)
 {
@@ -48,12 +50,26 @@ s_piece *pieces_create(s_filelist *filelist, s_bdata *info,
 }
 
 
-bool block_write(struct torrent *tor, void *data, size_t size, size_t off)
+bool block_write(s_torrent *tor, void *data, size_t size, size_t off)
 {
-  // TODO
-  tor = tor;
-  data = data;
-  size = size;
-  off = off;
+  s_piece *piece = &tor->pieces[off / tor->piece_size];
+  char *c_data = data;
+
+  size_t file_i = piece->file;
+  size_t cur_off = off;
+  size_t target_off = off + size;
+
+  for (; cur_off < target_off; file_i++)
+  {
+    if (file_i >= tor->filelist.nbfiles)
+      return true;
+    size_t start_off = tor->filelist.files[file_i].offset;
+    size_t end_off = start_off + tor->filelist.files[file_i].size;
+    size_t total = MIN(end_off, target_off) - cur_off;
+    char *data_file = tor->filelist.files[file_i].data;
+    for (size_t i = 0; i < total; i++)
+      data_file[i + cur_off - start_off] = c_data[cur_off];
+    cur_off = end_off;
+  }
   return false;
 }
