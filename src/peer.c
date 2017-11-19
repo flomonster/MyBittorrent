@@ -7,11 +7,7 @@
 
 bool peer_init(s_peer *peer, void *data)
 {
-  peer->pieces = 0;
-  peer->interested = false;
-  peer->choked = false;
-  peer->choking = false;
-
+  peer->pieces = NULL;
   peer->addr.sin_family = AF_INET;
 
   uint32_t *nip = data;
