@@ -18,15 +18,20 @@ struct torrent;
 #define COLOR_RESET   "\x1b[0m"
 
 
+// S stands for specified.
 #define LOGLEVELS(F)       \
   F(ERR,    COLOR_RED)     \
   F(WARN,   COLOR_BLUE)    \
   F(INFO,   COLOR_YELLOW)  \
+  F(SINFO,  COLOR_YELLOW)  \
   F(DBG,    COLOR_MAGENTA) \
-  F(NETDBG, COLOR_CYAN)
+  F(NETDBG, COLOR_CYAN)    \
+  F(SNETDBG, COLOR_CYAN)
+
 
 #define LOGLEVEL_ENUM(Name, Color)  \
   L_ ## Name,
+
 
 typedef enum loglevel
 {
@@ -34,9 +39,9 @@ typedef enum loglevel
 } e_loglevel;
 
 
-#define VERBOSE_LOGLEVEL L_NETDBG
-#define DEFAULT_LOGLEVEL L_INFO
-#define DEFAULT_LOGMASK  (1UL << L_INFO | 1UL << L_NETDBG)
+#define VERBOSE_LOGLEVEL L_SNETDBG
+#define DEFAULT_LOGLEVEL L_SINFO
+#define DEFAULT_LOGMASK  (1UL << L_SINFO | 1UL << L_SNETDBG)
 #define LOGMASK_FANCY  (~0UL)
 
 
