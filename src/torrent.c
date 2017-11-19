@@ -54,10 +54,11 @@ s_torrent *torrent_create(const char *path, bool init_arch)
     s_bdata *binfo = bdict_find(bencoded->data.dict, "info");
     s_bdata *bpiece_size = bdict_find(binfo->data.dict, "piece length");
     torrent->piece_size = bpiece_size->data.i;
+    s_bdata *bsha = bdict_find(binfo->data.dict, "pieces");
+    torrent->nbpieces = bsha->data.str.size / 20;
     torrent->pieces = pieces_create(&torrent->filelist, binfo,
-                                    torrent->piece_size);
+                                    torrent->nbpieces, torrent->piece_size);
   }
-
   return torrent;
 }
 
