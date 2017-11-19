@@ -26,6 +26,7 @@ typedef struct torrent
   s_server server;
   t_peer_id peer_id;
   s_piece *pieces;
+  size_t piece_size;
   s_filelist filelist;
 } s_torrent;
 

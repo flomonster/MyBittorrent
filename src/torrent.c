@@ -34,6 +34,7 @@ s_torrent *torrent_create(const char *path, bool init_arch)
   if (metainfo_init(&torrent->metainfo, path))
     errx(2, "torrent_create: metainfo_init failed");
 
+
   if (tracker_init(&torrent->tracker, &torrent->metainfo))
     errx(2, "torrent_create: tracker_init failed");
 
@@ -43,10 +44,19 @@ s_torrent *torrent_create(const char *path, bool init_arch)
     errx(2, "torrent_create: server_init failed");
 
   peer_id_gen(torrent->peer_id);
-  torrent->pieces = NULL;
 
-  if (init_arch && filelist_init(&torrent->filelist, torrent->metainfo.bencoded))
-    errx(2, "torrent_create: filelist_init failed");
+  if (init_arch)
+  {
+    s_bdata *bencoded = torrent->metainfo.bencoded;
+    if (filelist_init(&torrent->filelist, bencoded))
+      errx(2, "torrent_create: filelist_init failed");
+
+    s_bdata *binfo = bdict_find(bencoded->data.dict, "info");
+    s_bdata *bpiece_size = bdict_find(binfo->data.dict, "piece length");
+    torrent->piece_size = bpiece_size->data.i;
+    torrent->pieces = pieces_create(&torrent->filelist, binfo,
+                                    torrent->piece_size);
+  }
 
   return torrent;
 }
