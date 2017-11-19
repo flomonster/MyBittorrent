@@ -14,5 +14,7 @@ This is the list of features to implement:
   * [ ] Seeding
 * Advanced features
   * [ ] Multiple torrents
-  * [ ] Leech interruption
+  * Leech interruption
+    * [x] Check exsiting files
+    * [ ] Check sum
   * [ ] DHT

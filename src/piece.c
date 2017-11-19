@@ -9,43 +9,77 @@
 
 #define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
 
-static void piece_init(s_piece *piece, size_t file, size_t size, char *sha)
+
+struct data_loop
+{
+  size_t cur_piece;
+  size_t size;
+  size_t piece_file;
+  bool exist;
+};
+
+
+#define DATA_LOOP(Cur_piece, Size, Piece_file, Exist)\
+  (struct data_loop)                                 \
+  {                                                  \
+    .cur_piece = (Cur_piece),                        \
+    .size = (Size),                                  \
+    .piece_file = (Piece_file),                      \
+    .exist = (Exist),                                \
+  }
+
+
+struct sha_state
+{
+  char *sha;
+  bool exist;
+};
+
+
+#define SHA_STATE(Sha, Exist)                       \
+  (struct sha_state)                                \
+  {                                                 \
+    .sha = (Sha),                                   \
+    .exist = (Exist),                               \
+  }
+
+
+static void piece_init(s_piece *piece, size_t file, size_t size,
+                      struct sha_state *sha_state)
 {
   piece->file = file;
   piece->state = PIECE_MISSING;
   piece->size = size;
   piece->block_done = 0;
-  strncpy(piece->sha, sha, 20);
+  strncpy(piece->sha, sha_state->sha, 20);
 }
 
 
 s_piece *pieces_create(s_filelist *filelist, s_bdata *info,
-                       size_t piece_size)
+                       size_t nbpieces, size_t piece_size)
 {
   s_bdata *bsha = bdict_find(info->data.dict, "pieces");
-  size_t nbpieces = bsha->data.str.size / 20;
   s_piece *pieces = malloc(sizeof (s_piece) * nbpieces);
   if (!pieces)
     return NULL;
-  size_t cur_piece = 0;
-  size_t size = 0;
-  size_t piece_file = 0;
-  for (size_t i = 0; i < filelist->nbfiles; i++)
-  {
-    size += filelist->files[i].size;
-    if (size >= piece_size)
+  struct data_loop dl = DATA_LOOP(0, 0, 0, true);
+  for (size_t i = 0;
+       (dl.size += filelist->files[i].size) + 1 && i < filelist->nbfiles; i++)
+    if (dl.size >= piece_size)
     {
-      assert(nbpieces != cur_piece);
-      piece_init(pieces + cur_piece, piece_file, piece_size,
-                 bsha->data.str.data + (cur_piece * 20));
-      cur_piece++;
-      size -= piece_size;
-      piece_file = i + (!size);
+      assert(nbpieces != dl.cur_piece);
+      piece_init(pieces + dl.cur_piece, dl.piece_file, piece_size,
+               &SHA_STATE(bsha->data.str.data + (dl.cur_piece * 20), dl.exist));
+      dl.cur_piece++;
+      dl.size -= piece_size;
+      dl.piece_file = i + (!dl.size);
+      dl.exist = !(dl.size) || filelist->files[i].exist;
     }
-  }
-  if (size)
-    piece_init(pieces + cur_piece, piece_file, size,
-                 bsha->data.str.data + (cur_piece * 20));
+    else
+      dl.exist = dl.exist && filelist->files[i].exist;
+  if (dl.size)
+    piece_init(pieces + dl.cur_piece, dl.piece_file, dl.size,
+               &SHA_STATE(bsha->data.str.data + (dl.cur_piece * 20), dl.exist));
   return pieces;
 }
 

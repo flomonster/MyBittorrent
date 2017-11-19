@@ -34,5 +34,5 @@ typedef struct piece
 
 
 s_piece *pieces_create(s_filelist *filelist, s_bdata *info,
-                       size_t piece_size);
+                       size_t nbpieces, size_t piece_size);
 bool block_write(struct torrent *tor, void *data, size_t size, size_t off);
