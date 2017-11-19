@@ -1,6 +1,10 @@
 #pragma once
 
 #include "filelist.h"
+#include "sha.h"
+
+
+struct torrent;
 
 
 typedef enum piece_state
@@ -13,8 +17,13 @@ typedef enum piece_state
 
 typedef struct piece
 {
-  s_filelist *filelist;
   e_piece_state state;
+
+  // index in the torrent filelist
+  size_t file;
+
+  // sha1 of the piece
+  t_sha sha;
 
   // total piece size
   size_t size;
@@ -22,3 +31,8 @@ typedef struct piece
   // number of retrieved blocks
   size_t block_done;
 } s_piece;
+
+
+s_piece *pieces_create(s_filelist *filelist, s_bdata *info,
+                       size_t piece_size);
+bool block_write(struct torrent *tor, void *data, size_t size, size_t off);
