@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdbool.h>
 
 #include "path.h"
 
@@ -11,6 +12,7 @@ typedef struct file
   void *data;
   size_t size;
   size_t offset;
+  bool exist;
 } s_file;
 
 

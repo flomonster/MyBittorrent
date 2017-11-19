@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,11 +39,21 @@ void path_free(s_path *path)
 }
 
 
-void *path_map(s_path *path, size_t size, int dir_fd)
+void *path_map(s_path *path, size_t size, int dir_fd, bool *exist)
 {
   if (!path->next)
   {
-    int fd = openat(dir_fd, path->name, O_CREAT | O_RDWR, 0644);
+    int fd = openat(dir_fd, path->name, O_CREAT | O_EXCL | O_RDWR, 0644);
+
+    *exist = false;
+    if (fd < 0)
+    {
+      if (errno != EEXIST)
+        return NULL;
+      *exist = true;
+      if ((fd = openat(dir_fd, path->name, O_CREAT | O_RDWR, 0644)) < 0)
+        return NULL;
+    }
     if (fd < 0)
       return NULL;
 
@@ -60,7 +71,7 @@ void *path_map(s_path *path, size_t size, int dir_fd)
   if (next_fd < 0)
     return NULL;
 
-  void *res = path_map(path->next, size, next_fd);
+  void *res = path_map(path->next, size, next_fd, exist);
 
   if (close(next_fd) < 0)
     return NULL;
