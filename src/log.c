@@ -48,7 +48,7 @@ static void prelude_fancy(s_btlog_context *context, s_torrent *tor)
   {
     fprintf(g_log_config.target, COLOR_LBLUE "[");
     print_torrent_sha(tor);
-    fprintf(g_log_config.target, "]" COLOR_RESET);
+    fprintf(g_log_config.target, "]\t" COLOR_RESET);
   }
 
   const struct logmeta *lm = &g_loglevel_metadata[context->level];

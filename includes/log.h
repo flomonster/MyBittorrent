@@ -68,9 +68,14 @@ typedef struct btlog_context
     .component = (Component),                   \
   }
 
-
 s_logconfig g_log_config;
 
 
 void btlog_init(void);
 void btlog(s_btlog_context *context, struct torrent *tor, const char *fmt, ...);
+
+#define LOG(Level, Component, Torrent, ...)     \
+  btlog(&LCTX((Level), (Component)), (Torrent), __VA_ARGS__)
+
+#define SLOG(Level, Component, ...)    \
+  LOG(Level, Component, NULL, __VA_ARGS__)
