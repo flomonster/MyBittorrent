@@ -16,5 +16,5 @@ This is the list of features to implement:
   * [ ] Multiple torrents
   * Leech interruption
     * [x] Check exsiting files
-    * [ ] Check sum
+    * [x] Check sum
   * [ ] DHT

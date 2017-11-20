@@ -6,8 +6,10 @@
 #include "filelist.h"
 #include "piece.h"
 #include "torrent.h"
+#include "sha.h"
 
 #define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
+#define MAX(X, Y) ((X) > (Y) ? (X) : (Y))
 
 
 struct data_loop
@@ -29,33 +31,45 @@ struct data_loop
   }
 
 
-struct sha_state
-{
-  char *sha;
-  bool exist;
-};
-
-
-#define SHA_STATE(Sha, Exist)                       \
-  (struct sha_state)                                \
-  {                                                 \
-    .sha = (Sha),                                   \
-    .exist = (Exist),                               \
-  }
-
-
-static void piece_init(s_piece *piece, size_t file, size_t size,
-                      struct sha_state *sha_state)
+static void piece_init(s_piece *piece, size_t file, size_t size, char *sha)
 {
   piece->file = file;
   piece->state = PIECE_MISSING;
   piece->size = size;
   piece->block_done = 0;
-  strncpy(piece->sha, sha_state->sha, 20);
+  strncpy(piece->sha, sha, 20);
 }
 
 
-s_piece *pieces_create(s_filelist *filelist, s_bdata *info,
+static void piece_check(s_piece *pieces, s_filelist *filelist,
+                        size_t piece, size_t piece_size)
+{
+  size_t off = piece * piece_size;
+  size_t target = off + pieces[piece].size;
+  size_t file = pieces[piece].file;
+  size_t sfile = filelist->files[file].offset;
+  char *data = filelist->files->data;
+  SHA_CTX c;
+  SHA1_Init(&c);
+  while (sfile < target)
+  {
+    size_t filesize = filelist->files[file].size;
+    size_t start = MAX(sfile, off);
+    size_t end = MIN(target, sfile + filesize);
+    SHA_Update(&c, data + start, end - start);
+    off += end - start;
+    sfile += filesize;
+    file++;
+  }
+  unsigned char piece_sha[SHA_DIGEST_LENGTH];
+  void *md = piece_sha;
+  SHA1_Final(md, &c);
+  if (!strncmp(md, pieces[piece].sha, 20))
+    pieces[piece].state = PIECE_AVAILABLE;
+}
+
+
+s_piece *pieces_create(s_filelist *fl, s_bdata *info,
                        size_t nbpieces, size_t piece_size)
 {
   s_bdata *bsha = bdict_find(info->data.dict, "pieces");
@@ -63,23 +77,25 @@ s_piece *pieces_create(s_filelist *filelist, s_bdata *info,
   if (!pieces)
     return NULL;
   struct data_loop dl = DATA_LOOP(0, 0, 0, true);
-  for (size_t i = 0;
-       (dl.size += filelist->files[i].size) + 1 && i < filelist->nbfiles; i++)
-    if (dl.size >= piece_size)
+  for (size_t i = 0; i < fl->nbfiles && (dl.size += fl->files[i].size) + 1; i++)
+  {
+    while (dl.size >= piece_size)
     {
-      assert(nbpieces != dl.cur_piece);
       piece_init(pieces + dl.cur_piece, dl.piece_file, piece_size,
-               &SHA_STATE(bsha->data.str.data + (dl.cur_piece * 20), dl.exist));
+                 bsha->data.str.data + (dl.cur_piece * 20));
+      if (dl.exist)
+        piece_check(pieces, fl, dl.cur_piece, piece_size);
       dl.cur_piece++;
       dl.size -= piece_size;
       dl.piece_file = i + (!dl.size);
-      dl.exist = !(dl.size) || filelist->files[i].exist;
     }
-    else
-      dl.exist = dl.exist && filelist->files[i].exist;
+    dl.exist = !(dl.size) || (dl.exist && fl->files[i].exist);
+  }
   if (dl.size)
     piece_init(pieces + dl.cur_piece, dl.piece_file, dl.size,
-               &SHA_STATE(bsha->data.str.data + (dl.cur_piece * 20), dl.exist));
+               bsha->data.str.data + (dl.cur_piece * 20));
+  if (dl.size && dl.exist)
+    piece_check(pieces, fl, dl.cur_piece, piece_size);
   return pieces;
 }
 
