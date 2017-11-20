@@ -64,7 +64,7 @@ static void prelude_boring(s_btlog_context *context, s_torrent *tor)
     print_torrent_sha(tor);
     fprintf(g_log_config.target, ": ");
   }
-  fprintf(g_log_config.target, "%s:\t", context->component);
+  fprintf(g_log_config.target, "%s: ", context->component);
 }
 
 

@@ -5,6 +5,7 @@
 
 #include "announce.h"
 #include "dbuf.h"
+#include "log.h"
 #include "metainfo.h"
 #include "torrent.h"
 
@@ -68,6 +69,7 @@ static s_dbuf *tracker_announce_sub(CURL *curl, s_torrent *tor)
 
 s_dbuf *tracker_announce_raw(s_torrent *tor)
 {
+  LOG(L_SNETDBG, "tracker", tor, "requesting peers to %s", tor->tracker.url);
   CURL *curl = curl_easy_init();
   if (!curl)
   {

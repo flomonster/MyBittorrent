@@ -5,7 +5,7 @@ This is the list of features to implement:
     * [x] Option pretty-print-torrent-file
     * [x] Option dump-peers
   * Option verbose
-    * [ ] Tracker request
+    * [x] Tracker request
     * [ ] Peer connection / disconnection
     * [ ] Peer message
   * Leeching
