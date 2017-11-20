@@ -57,7 +57,7 @@ void *path_map(s_path *path, size_t size, int dir_fd, bool *exist)
     if (fd < 0)
       return NULL;
 
-    if (posix_fallocate(fd, 0, size))
+    if (fallocate(fd, 0, 0, size))
     {
       close(fd);
       return NULL;
