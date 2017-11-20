@@ -15,13 +15,13 @@ bool peer_init(s_peer *peer, void *data)
   peer->addr.sin_family = AF_INET;
 
   uint32_t *nip = data;
-  peer->addr.sin_addr.s_addr = ntohl(*nip);
+  peer->addr.sin_addr.s_addr = *nip;
 
   char *tmp = data;
   tmp += 4;
   data = tmp;
   uint16_t *nport = data;
-  peer->addr.sin_port = ntohs(*nport);
+  peer->addr.sin_port = *nport;
   peer->conn = NULL;
   return false;
 }
@@ -32,7 +32,7 @@ static inline bool connect_wait(int sock, struct timeval tv)
   fd_set myset;
   FD_ZERO(&myset);
   FD_SET(sock, &myset);
-  if (select(sock + 1, NULL, &myset, NULL, &tv) < 0)
+  if (select(sock + 1, NULL, &myset, NULL, &tv) <= 0)
     return true;
 
   int valopt;
