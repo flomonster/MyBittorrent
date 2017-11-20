@@ -6,7 +6,7 @@
 #include "btopts.h"
 #include "announce.h"
 #include "torrent.h"
-
+#include "event_loop.h"
 
 
 int torrent_mode(int argc, char *argv[])
@@ -14,14 +14,16 @@ int torrent_mode(int argc, char *argv[])
   for (int i = 0; i < argc; i++)
   {
     s_torrent *tor = torrent_create(argv[i], true);
-    s_announce *ann = tracker_announce(tor);
+    s_announce *ann = tracker_announce(tor, "started");
     if (!ann)
       warnx("cannot fetch announcement");
     else
     {
-      bdata_print(stdout, ann->bencoded);
       if (peerlist_init(&tor->peerlist, ann))
         return EXIT_FAILURE;
+      int res = event_loop(tor);
+      if (res)
+        return res;
     }
     announce_free(ann);
     torrent_free(tor);
@@ -44,12 +46,12 @@ int metainfo_print(int argc, char *argv[])
 }
 
 
-int dumppeers_mode(int argc, char *argv[])
+int dump_peers_mode(int argc, char *argv[])
 {
   for (int i = 0; i < argc; i++)
   {
     s_torrent *tor = torrent_create(argv[i], false);
-    s_announce *ann = tracker_announce(tor);
+    s_announce *ann = tracker_announce(tor, "started");
     if (!ann)
       warnx("cannot fetch announcement");
     else if (peerlist_init(&tor->peerlist, ann))
@@ -65,15 +67,12 @@ int dumppeers_mode(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
+  SLOG(L_DBG, "main", "parsing options");
   int torstart = btopts_parse(argc, argv);
   if (torstart < 0)
     // exit when torstart < 0,
     // but succeed when torstart == -1
     return torstart + 1;
-
-  btlog(&LCTX(L_INFO, "main"), NULL, "starting info");
-  btlog(&LCTX(L_ERR, "main"), NULL, "starting err");
-  btlog(&LCTX(L_WARN, "main"), NULL, "starting warn");
 
   argc -= torstart;
   argv += torstart;
@@ -81,11 +80,13 @@ int main(int argc, char *argv[])
   switch (g_btopts.btmode)
   {
   case TORRENT_MODE:
+    SLOG(L_DBG, "main", "downloading torrents");
     return torrent_mode(argc, argv);
   case METAINFO_PRINT:
+    SLOG(L_DBG, "main", "printing metadata");
     return metainfo_print(argc, argv);
   case DUMP_PEERS:
-    return dumppeers_mode(argc, argv);
-    return EXIT_FAILURE;
+    SLOG(L_DBG, "main", "dumping peers");
+    return dump_peers_mode(argc, argv);
   }
 }

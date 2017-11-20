@@ -31,5 +31,6 @@ typedef struct torrent
   s_filelist filelist;
 } s_torrent;
 
+
 s_torrent *torrent_create(const char *path, bool init_arch);
 void torrent_free(s_torrent *tor);

@@ -52,7 +52,7 @@ static s_dbuf *tracker_announce_url(CURL *curl, char *url)
 }
 
 
-static s_dbuf *tracker_announce_sub(CURL *curl, s_torrent *tor)
+static s_dbuf *tracker_announce_sub(CURL *curl, s_torrent *tor, const char *ev)
 {
   char url[2000];
   char *info_hash = curl_easy_escape(curl, tor->metainfo.sha,
@@ -60,14 +60,14 @@ static s_dbuf *tracker_announce_sub(CURL *curl, s_torrent *tor)
   sprintf(url, "%s?peer_id=%.20s"
           "&info_hash=%s"
           "&port=6881&left=1501102080&downloaded=100"
-          "&uploaded=0&compact=1&event=started",
-          tor->tracker.url, tor->peer_id, info_hash);
+          "&uploaded=0&compact=1&event=%s",
+          tor->tracker.url, tor->peer_id, info_hash, ev);
   curl_free(info_hash);
   return tracker_announce_url(curl, url);
 }
 
 
-s_dbuf *tracker_announce_raw(s_torrent *tor)
+s_dbuf *tracker_announce_raw(s_torrent *tor, const char *ev)
 {
   LOG(L_SNETDBG, "tracker", tor, "requesting peers to %s", tor->tracker.url);
   CURL *curl = curl_easy_init();
@@ -77,15 +77,15 @@ s_dbuf *tracker_announce_raw(s_torrent *tor)
     return NULL;
   }
 
-  s_dbuf *res = tracker_announce_sub(curl, tor);
+  s_dbuf *res = tracker_announce_sub(curl, tor, ev);
   curl_easy_cleanup(curl);
   return res;
 }
 
 
-s_announce *tracker_announce(s_torrent *tor)
+s_announce *tracker_announce(s_torrent *tor, const char *ev)
 {
-  s_dbuf *raw = tracker_announce_raw(tor);
+  s_dbuf *raw = tracker_announce_raw(tor, ev);
   if (!raw)
     return NULL;
 

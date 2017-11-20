@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "log.h"
 #include "poller.h"
 
 
@@ -29,9 +30,11 @@ void poller_destroy(s_poller *pol)
 bool poller_register(s_poller *pol, s_pollfd *pollfd)
 {
   struct epoll_event event;
-  event.events = EPOLLIN;
+  // listen for edges of input and output events
+  event.events = POLLER_EPOLL_MODE | EPOLLET;
   event.data.ptr = pollfd;
-  pollfd->has_data = false;
+  pollfd->can_recv = false;
+  pollfd->can_send = false;
   if (epoll_ctl(pol->fd, EPOLL_CTL_ADD, pollfd->fd, &event) < 0)
     // TODO: perror
     return true;
@@ -43,7 +46,7 @@ static bool epoll_has_error(uint32_t event)
 {
   return ((event & EPOLLERR)
          || (event & EPOLLHUP)
-         || !(event & EPOLLIN));
+         || !(event & POLLER_EPOLL_MODE));
 }
 
 
@@ -60,7 +63,10 @@ bool poller_update(s_poller *pol, int timeout)
     if (epoll_has_error(event->events))
       close(cur_pfd->fd);
     else
-      cur_pfd->has_data = true;
+    {
+      cur_pfd->can_recv = event->events & EPOLLIN;
+      cur_pfd->can_send = event->events & EPOLLOUT;
+    }
   }
 
   return false;

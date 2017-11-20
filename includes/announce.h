@@ -12,5 +12,5 @@ typedef struct announce
 } s_announce;
 
 
-s_announce *tracker_announce(s_torrent *tor);
+s_announce *tracker_announce(s_torrent *tor, const char *ev);
 void announce_free(s_announce *announce);

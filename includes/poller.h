@@ -8,8 +8,18 @@
 typedef struct pollfd
 {
   int fd;
-  bool has_data;
+  bool can_recv;
+  bool can_send;
 } s_pollfd;
+
+
+#define POLLFD(Fd)                              \
+  (s_pollfd)                                    \
+  {                                             \
+    .fd = (Fd),                                 \
+    .can_recv = false,                          \
+    .can_send = false,                          \
+  }
 
 
 typedef struct poller
@@ -18,6 +28,9 @@ typedef struct poller
   size_t max_events;
   struct epoll_event *events;
 } s_poller;
+
+
+#define POLLER_EPOLL_MODE (EPOLLIN | EPOLLOUT)
 
 
 bool poller_init(s_poller *pol, size_t max_events);
