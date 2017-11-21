@@ -5,12 +5,18 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "peer.h"
 #include "netutils.h"
+#include "peer.h"
+#include "rcount.h"
 
 
-bool peer_init(s_peer *peer, void *data)
+s_peer *peer_create(s_peer **prec, s_peer *next, void *data)
 {
+  s_peer *peer = rcount_malloc(sizeof (s_peer), peer_free);
+  if (!peer)
+    return NULL;
+  peer->next = next;
+  peer->prec = prec;
   peer->pieces = NULL;
   peer->addr.sin_family = AF_INET;
 
@@ -24,7 +30,14 @@ bool peer_init(s_peer *peer, void *data)
   peer->addr.sin_port = *nport;
   peer->conn = NULL;
   peer->fail_count = 0;
-  return false;
+  return peer;
+}
+
+
+void peer_free(void *peer)
+{
+  // TODO Free the bitset
+  peer = peer;
 }
 
 

@@ -15,6 +15,8 @@ struct peer_conn;
 
 typedef struct peer
 {
+  struct peer *next;
+  struct peer **prec;
   s_bitset *pieces;
   struct sockaddr_in addr;
   t_peer_id peer_id;
@@ -27,5 +29,6 @@ typedef struct peer
 ** \param data a 6-bytes peer data block
 **  as described in bep 23.
 */
-bool peer_init(s_peer *peer, void *data);
+s_peer *peer_create(s_peer **prec, s_peer *next, void *data);
+void peer_free(void *peer);
 int peer_connect(s_peer *peer, struct timeval tv);
