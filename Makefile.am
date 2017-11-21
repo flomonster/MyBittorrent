@@ -23,8 +23,9 @@ my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/poller.c includes/poller.h \
                         src/event_loop.c includes/event_loop.h \
                         src/peer_conn.c includes/peer_conn.h \
-                        src/netutils.c includes/netutils.h
-
+                        src/netutils.c includes/netutils.h \
+                        src/transmitters.c includes/transmission.h \
+                        src/transmission.c
 
 
 AM_CPPFLAGS = -iquote includes -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE

@@ -1,7 +1,7 @@
 #include <string.h>
 
+#include "log.h"
 #include "peer_conn.h"
-#include <stdio.h> // TODO: remove
 
 
 #define CONNECT_TIMEOUT                         \
@@ -11,10 +11,31 @@
     .tv_usec = 1,                               \
   }
 
+
+static void handle_transmission(s_trans *trans, s_peer_conn *conn,
+                                s_torrent *tor)
+{
+  if (!conn->active)
+    return;
+
+  t_trans_status st = transmit(trans, conn, tor);
+  switch (st)
+  {
+  case TRANS_RETRY:
+    break;
+  case TRANS_ERROR:
+  case TRANS_CLOSING:
+    LOG(L_INFO, "main", tor, "closed connection");
+    peer_conn_clear(conn, false);
+    break;
+  }
+}
+
+
 void peer_conn_trade(s_peer_conn *conn, s_torrent *tor)
 {
-  (void)conn;
-  (void)tor;
+  handle_transmission(&conn->in_trans, conn, tor);
+  handle_transmission(&conn->out_trans, conn, tor);
 }
 
 
