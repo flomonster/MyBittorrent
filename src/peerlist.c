@@ -36,3 +36,8 @@ void peerlist_print(FILE *f, s_peerlist *peerlist)
     fprintf(f, "%s:%d\n", buffer, peerlist->peers[i].addr.sin_port);
   }
 }
+
+void peerlist_destroy(s_peerlist *peerlist)
+{
+  free(peerlist->peers);
+}
