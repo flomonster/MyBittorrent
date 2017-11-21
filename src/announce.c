@@ -79,6 +79,7 @@ s_dbuf *tracker_announce_raw(s_torrent *tor, const char *ev)
 
   s_dbuf *res = tracker_announce_sub(curl, tor, ev);
   curl_easy_cleanup(curl);
+  curl_global_cleanup();
   return res;
 }
 
