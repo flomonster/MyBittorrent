@@ -1,5 +1,7 @@
 #pragma once
 
+#include "torrent.h"
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <sys/epoll.h>
@@ -33,8 +35,10 @@ typedef struct poller
 #define POLLER_EPOLL_MODE (EPOLLIN | EPOLLOUT)
 
 
-bool poller_init(s_poller *pol, size_t max_events);
+struct torrent;
+
+bool poller_init(s_poller *pol, s_torrent *tor, size_t max_events);
 void poller_destroy(s_poller *pol);
 
-bool poller_register(s_poller *pol, s_pollfd *pollfd);
-bool poller_update(s_poller *pol, int timeout);
+bool poller_register(s_poller *pol, s_torrent *tor, s_pollfd *pollfd);
+bool poller_update(s_poller *pol, s_torrent *tor, int timeout);

@@ -51,7 +51,7 @@ typedef struct trans
   e_trans_type type;
 } s_trans;
 
-
+#define TRANS_IS_SEND(Trans) ((Trans)->transmitter == pollfd_send)
 #define TRANS_ACTIVE(Trans) (!!(Trans)->total)
 
 

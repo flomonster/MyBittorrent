@@ -69,6 +69,5 @@ int peer_connect(s_peer *peer, struct timeval tv)
       close(sock);
       return -1;
     }
-  fd_setblock(sock, true);
   return sock;
 }

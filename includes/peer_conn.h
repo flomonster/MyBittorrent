@@ -62,5 +62,5 @@ typedef struct peer_conn
 
 
 void peer_conn_trade(s_peer_conn *conn, s_torrent *tor);
-void peer_conn_init(s_peer_conn *conn, s_torrent *tor);
+void peer_conn_init(s_peer_conn *conn, s_torrent *tor, s_poller *pol);
 void peer_conn_clear(s_peer_conn *conn, bool active);

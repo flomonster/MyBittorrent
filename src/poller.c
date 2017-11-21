@@ -3,10 +3,11 @@
 
 #include "log.h"
 #include "poller.h"
+#include "torrent.h"
 
-
-bool poller_init(s_poller *pol, size_t max_events)
+bool poller_init(s_poller *pol, s_torrent *tor, size_t max_events)
 {
+  LOG(L_NETDBG, "poller", tor, "initializing");
   if (!(pol->events = malloc(sizeof(*pol->events) * max_events)))
     return true;
 
@@ -27,8 +28,9 @@ void poller_destroy(s_poller *pol)
 }
 
 
-bool poller_register(s_poller *pol, s_pollfd *pollfd)
+bool poller_register(s_poller *pol, s_torrent *tor, s_pollfd *pollfd)
 {
+  LOG(L_NETDBG, "poller", tor, "registering fd %d", pollfd->fd);
   struct epoll_event event;
   // listen for edges of input and output events
   event.events = POLLER_EPOLL_MODE | EPOLLET;
@@ -51,7 +53,7 @@ static bool epoll_has_error(uint32_t event)
 }
 
 
-bool poller_update(s_poller *pol, int timeout)
+bool poller_update(s_poller *pol, s_torrent *tor, int timeout)
 {
   int ecount = epoll_wait(pol->fd, pol->events, pol->max_events, timeout);
   if (ecount < 0)
@@ -65,7 +67,12 @@ bool poller_update(s_poller *pol, int timeout)
       close(cur_pfd->fd);
     else
     {
+      if (event->events & EPOLLIN)
+        LOG(L_NETDBG, "poller", tor, "input notification on fd %d", cur_pfd->fd);
       cur_pfd->can_recv |= event->events & EPOLLIN;
+
+      if (event->events & EPOLLOUT)
+        LOG(L_NETDBG, "poller", tor, "output notification on fd %d", cur_pfd->fd);
       cur_pfd->can_send |= event->events & EPOLLOUT;
     }
   }

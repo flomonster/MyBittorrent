@@ -4,6 +4,7 @@
 #include "log.h"
 #include "netutils.h"
 #include "peer_conn.h"
+#include "poller.h"
 
 
 #define CONNECT_TIMEOUT                         \
@@ -41,7 +42,7 @@ void peer_conn_trade(s_peer_conn *conn, s_torrent *tor)
 }
 
 
-void peer_conn_init(s_peer_conn *conn, s_torrent *tor)
+void peer_conn_init(s_peer_conn *conn, s_torrent *tor, s_poller *pol)
 {
   peer_conn_clear(conn, false);
   s_peer *p = tor->peerlist.peers;
@@ -56,11 +57,14 @@ void peer_conn_init(s_peer_conn *conn, s_torrent *tor)
     p->fail_count++;
     return;
   }
+
+  poller_register(pol, tor, &conn->socket);
   p->conn = conn;
   conn->peer = p;
   conn->active = true;
   LOG(L_INFO, "peer_conn", tor, "peer connection activated");
   handshake_send(tor, conn, &conn->out_trans);
+  handshake_receive(tor, conn, &conn->in_trans);
 }
 
 

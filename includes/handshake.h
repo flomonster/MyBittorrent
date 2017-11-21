@@ -7,3 +7,6 @@
 
 void handshake_send(struct torrent *tor, struct peer_conn *conn,
                     struct trans *trans);
+
+void handshake_receive(struct torrent *tor, struct peer_conn *conn,
+                       struct trans *trans);
