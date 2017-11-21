@@ -19,6 +19,8 @@ static inline void *get_metadata(void *data)
 void *rcount_malloc(size_t size, f_rcount_dest dest)
 {
   struct rcount_meta *meta = malloc(size + sizeof(struct rcount_meta));
+  if (!meta)
+    return NULL;
   meta->dest = dest;
   meta->count = 1;
   return get_datablk(meta);;
