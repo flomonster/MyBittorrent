@@ -48,16 +48,15 @@ static void piece_check(s_piece *pieces, s_filelist *filelist,
   size_t target = off + pieces[piece].size;
   size_t file = pieces[piece].file;
   size_t sfile = filelist->files[file].offset;
-  char *data = filelist->files->data;
   SHA_CTX c;
   SHA1_Init(&c);
   while (sfile < target)
   {
+    char *data = filelist->files[file].data;
     size_t filesize = filelist->files[file].size;
     size_t start = MAX(sfile, off);
     size_t end = MIN(target, sfile + filesize);
-    SHA1_Update(&c, data + start, end - start);
-    off += end - start;
+    SHA1_Update(&c, data + start - filelist->files[file].offset, end - start);
     sfile += filesize;
     file++;
   }
