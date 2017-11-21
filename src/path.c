@@ -57,11 +57,12 @@ void *path_map(s_path *path, size_t size, int dir_fd, bool *exist)
     if (fd < 0)
       return NULL;
 
-    if (fallocate(fd, 0, 0, size))
-    {
-      close(fd);
-      return NULL;
-    }
+    if (fallocate(fd, 0, 0, size) < 0)
+      if (errno != EOPNOTSUPP || ftruncate(fd, size) < 0)
+      {
+        close(fd);
+        return NULL;
+      }
 
     void *res = mmap(NULL, size, PROT_WRITE | PROT_READ, MAP_PRIVATE, fd, 0);
     return res == MAP_FAILED ? NULL : res;
