@@ -12,3 +12,4 @@ typedef struct path
 
 s_path *path_create(s_dbuf *name, s_path *next);
 void *path_map(s_path *path, size_t size, int dir_fd, bool *exist);
+void path_free(s_path *path);

@@ -69,10 +69,10 @@ bool filelist_init(s_filelist *filelist, s_bdata *bencode)
   return multifile_init(filelist, bfiles);
 }
 
+
 void filelist_destroy(s_filelist *filelist)
 {
   for (size_t i = 0; i < filelist->nbfiles; i++)
-  {
-
-  }
+    file_destroy(filelist->files + i);
+  free(filelist->files);
 }
