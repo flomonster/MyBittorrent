@@ -36,8 +36,8 @@ s_peer *peer_create(s_peer **prec, s_peer *next, void *data)
 
 void peer_free(void *peer)
 {
-  // TODO Free the bitset
-  peer = peer;
+  s_peer *p = peer;
+  bitset_free(p->pieces);
 }
 
 
