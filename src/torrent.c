@@ -13,7 +13,7 @@
 
 #define PEER_ID_BEGIN "-MB2020-"
 
-static  void peer_id_gen(t_peer_id pi)
+static void peer_id_gen(t_peer_id pi)
 {
   const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                          "0123456789";
@@ -22,6 +22,23 @@ static  void peer_id_gen(t_peer_id pi)
     pi[i] = charset[rand() % sizeof (charset)];
   memcpy(pi, PEER_ID_BEGIN, sizeof(PEER_ID_BEGIN) - 1);
 }
+
+
+static void arch_init(s_torrent *tor)
+{
+  s_bdata *bencoded = tor->metainfo.bencoded;
+  if (filelist_init(&tor->filelist, bencoded))
+    errx(2, "torrent_create: filelist_init failed");
+
+  s_bdata *binfo = bdict_find(bencoded->data.dict, "info");
+  s_bdata *bpiece_size = bdict_find(binfo->data.dict, "piece length");
+  tor->piece_size = bpiece_size->data.i;
+  s_bdata *bsha = bdict_find(binfo->data.dict, "pieces");
+  tor->nbpieces = bsha->data.str.size / 20;
+  tor->pieces = pieces_create(&tor->filelist, binfo,
+                              tor->nbpieces, tor->piece_size);
+}
+
 
 s_torrent *torrent_create(const char *path, bool init_arch)
 {
@@ -46,26 +63,25 @@ s_torrent *torrent_create(const char *path, bool init_arch)
   peer_id_gen(torrent->peer_id);
 
   if (init_arch)
+    arch_init(torrent);
+  else
   {
-    s_bdata *bencoded = torrent->metainfo.bencoded;
-    if (filelist_init(&torrent->filelist, bencoded))
-      errx(2, "torrent_create: filelist_init failed");
-
-    s_bdata *binfo = bdict_find(bencoded->data.dict, "info");
-    s_bdata *bpiece_size = bdict_find(binfo->data.dict, "piece length");
-    torrent->piece_size = bpiece_size->data.i;
-    s_bdata *bsha = bdict_find(binfo->data.dict, "pieces");
-    torrent->nbpieces = bsha->data.str.size / 20;
-    torrent->pieces = pieces_create(&torrent->filelist, binfo,
-                                    torrent->nbpieces, torrent->piece_size);
+    torrent->filelist.files = NULL;
+    torrent->filelist.nbfiles = 0;
+    torrent->piece_size = 0;
+    torrent->nbpieces = 0;
+    torrent->pieces = NULL;
   }
+
   return torrent;
 }
 
 
 void torrent_free(s_torrent *tor)
 {
+  peerlist_destroy(&tor->peerlist);
   metainfo_destroy(&tor->metainfo);
   tracker_destroy(&tor->tracker);
+  filelist_destroy(&tor->filelist);
   free(tor);
 }
