@@ -7,6 +7,7 @@
 #include "bencode.h"
 #include "peer.h"
 #include "peerlist.h"
+#include "rcount.h"
 
 
 bool peerlist_init(s_peerlist *peerlist, s_announce *announce)
@@ -15,29 +16,48 @@ bool peerlist_init(s_peerlist *peerlist, s_announce *announce)
   s_bdata *bpeers = bdict_find(announce->bencoded->data.dict, "peers");
   assert(bpeers->type == BSTR);
 
-  peerlist->nbpeers = bpeers->data.str.size / 6;
-  peerlist->peers = malloc(sizeof (s_peer) * peerlist->nbpeers);
-  if (!peerlist->peers)
-    return true;
+  size_t nbpeers = bpeers->data.str.size / 6;
+  peerlist->peers = NULL;
 
-  for (size_t i = 0; i < peerlist->nbpeers; i++)
-    if (peer_init(peerlist->peers + i, bpeers->data.str.data + i * 6))
+  for (size_t i = 0; i < nbpeers; i++)
+    if (peerlist_append(peerlist, bpeers->data.str.data + i * 6))
       return true;
+  return false;
+}
+
+
+bool peerlist_append(s_peerlist *peerlist, void *data)
+{
+  s_peer *peer = peer_create(&peerlist->peers, peerlist->peers, data);
+  if (!peer)
+    return true;
+  peerlist->nbpeers++;
+  if (peerlist->peers)
+    peerlist->peers->prec = &peer->next;
+  peerlist->peers = peer;
   return false;
 }
 
 
 void peerlist_print(FILE *f, s_peerlist *peerlist)
 {
-  for (size_t i = 0; i < peerlist->nbpeers; i++)
+  s_peer *peer = peerlist->peers;
+  while (peer)
   {
     char buffer[20];
-    inet_ntop(AF_INET, &(peerlist->peers[i].addr.sin_addr), buffer, 20);
-    fprintf(f, "%s:%d\n", buffer, peerlist->peers[i].addr.sin_port);
+    inet_ntop(AF_INET, &(peer->addr.sin_addr), buffer, 20);
+    fprintf(f, "%s:%d\n", buffer, peer->addr.sin_port);
+    peer = peer->next;
   }
 }
 
 void peerlist_destroy(s_peerlist *peerlist)
 {
-  free(peerlist->peers);
+  s_peer *peer = peerlist->peers;
+  while (peer)
+  {
+    s_peer *next = peer->next;
+    rcount_deref(peer);
+    peer = next;
+  }
 }
