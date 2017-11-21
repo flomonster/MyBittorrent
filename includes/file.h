@@ -17,3 +17,4 @@ typedef struct file
 
 
 bool file_init(s_file *file, s_path *path, size_t size, size_t offset);
+void file_destroy(s_file *file);
