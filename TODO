@@ -9,6 +9,11 @@ This is the list of features to implement:
     * [ ] Peer connection / disconnection
     * [ ] Peer message
   * Leeching
+    * [ ] Networking backend
+      * [ ] Initial transmissions
+        * [ ] Sending side: header send
+        * [ ] Receiving side: header parse
+      * [ ] Full flowgraph
     * [ ] Single-file torrents
     * [ ] Multi-files torrents
   * [ ] Seeding
