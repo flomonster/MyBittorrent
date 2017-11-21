@@ -19,6 +19,23 @@ struct torrent;
 typedef ssize_t t_trans_status;
 
 
+typedef enum trans_type
+{
+  T_TYPE_SEND,
+  T_TYPE_RECV,
+} e_trans_type;
+
+
+
+// breaks the declaration dependancy between f_trans_callback
+// and s_trans
+struct trans;
+
+typedef t_trans_status (*f_trans_callback)(struct torrent *tor,
+                                           struct peer_conn *conn,
+                                           struct trans *trans,
+                                           t_trans_status status);
+
 typedef struct trans
 {
   size_t transmitted;
@@ -27,16 +44,19 @@ typedef struct trans
 
   // on -2, wait, on -1, exit, on 0, end the trans,
   // when positive, update transmitted
-  ssize_t (*transmitter)(void *state, char *buf, size_t size);
+  ssize_t (*transmitter)(s_pollfd *state, char *buf, size_t size);
 
   // when all data is transmitted, call back
-  t_trans_status (*callback)(struct torrent *tor, struct peer_conn *conn,
-                             struct trans *trans, t_trans_status status);
+  f_trans_callback callback;
+  e_trans_type type;
 } s_trans;
 
 
 #define TRANS_ACTIVE(Trans) (!!(Trans)->total)
 
+
+void trans_setup(s_trans *trans, f_trans_callback callback,
+                 void *buf, size_t size);
 
 t_trans_status transmit(s_trans *trans, struct peer_conn *conn,
                         struct torrent *tor);

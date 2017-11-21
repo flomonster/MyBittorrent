@@ -33,8 +33,9 @@ bool poller_register(s_poller *pol, s_pollfd *pollfd)
   // listen for edges of input and output events
   event.events = POLLER_EPOLL_MODE | EPOLLET;
   event.data.ptr = pollfd;
-  pollfd->can_recv = false;
-  pollfd->can_send = false;
+  // the poller is edge triggered, so we need to try at first
+  pollfd->can_recv = true;
+  pollfd->can_send = true;
   if (epoll_ctl(pol->fd, EPOLL_CTL_ADD, pollfd->fd, &event) < 0)
     // TODO: perror
     return true;
@@ -64,8 +65,8 @@ bool poller_update(s_poller *pol, int timeout)
       close(cur_pfd->fd);
     else
     {
-      cur_pfd->can_recv = event->events & EPOLLIN;
-      cur_pfd->can_send = event->events & EPOLLOUT;
+      cur_pfd->can_recv |= event->events & EPOLLIN;
+      cur_pfd->can_send |= event->events & EPOLLOUT;
     }
   }
 

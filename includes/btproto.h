@@ -7,13 +7,15 @@
 #include "sha.h"
 #include "peer.h"
 
+
+#define PROTO_NAME "BitTorrent protocol"
+#define PROTO_NAME_LEN (sizeof(PROTO_NAME) - 1)
+
+
 typedef struct bthandshake
 {
-  struct
-  {
-    unsigned char len;
-    unsigned char data[256];
-  } handshake_pstr;
+  unsigned char plen;
+  unsigned char pstr[PROTO_NAME_LEN];
   unsigned char reserved[8];
   t_sha info_hash;
   t_peer_id peer_id;

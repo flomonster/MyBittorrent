@@ -5,7 +5,7 @@
 
 #define MAX_EVENTS 60
 #define TIMEOUT 5
-#define LOOP_MAX 100
+#define LOOP_MAX 10
 
 bool event_loop(s_torrent *tor)
 {

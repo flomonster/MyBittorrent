@@ -17,8 +17,8 @@ typedef struct pollfd
   (s_pollfd)                                    \
   {                                             \
     .fd = (Fd),                                 \
-    .can_recv = false,                          \
-    .can_send = false,                          \
+    .can_recv = true,                           \
+    .can_send = true,                           \
   }
 
 

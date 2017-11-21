@@ -1,6 +1,8 @@
 #include <string.h>
 
+#include "handshake.h"
 #include "log.h"
+#include "netutils.h"
 #include "peer_conn.h"
 
 
@@ -58,6 +60,7 @@ void peer_conn_init(s_peer_conn *conn, s_torrent *tor)
   conn->peer = p;
   conn->active = true;
   LOG(L_INFO, "peer_conn", tor, "peer connection activated");
+  handshake_send(tor, conn, &conn->out_trans);
 }
 
 
@@ -69,4 +72,8 @@ void peer_conn_clear(s_peer_conn *conn, bool active)
   conn->state_am = PEER_STATE(true, false);
   conn->state_peer = PEER_STATE(true, false);
   conn->active = active;
+  conn->in_trans.type = T_TYPE_RECV;
+  conn->in_trans.transmitter = pollfd_recv;
+  conn->out_trans.type = T_TYPE_SEND;
+  conn->out_trans.transmitter = pollfd_send;
 }
