@@ -26,6 +26,7 @@ t_trans_status transmit(s_trans *trans, struct peer_conn *conn,
     trans->transmitted += res;
   }
 
+  assert(trans->callback);
   assert(trans->transmitted == trans->total);
   trans->transmitted = trans->total = 0;
 

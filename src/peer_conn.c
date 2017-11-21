@@ -43,20 +43,28 @@ void peer_conn_init(s_peer_conn *conn, s_torrent *tor)
 {
   peer_conn_clear(conn, false);
   s_peer *p = tor->peerlist.peers;
-  for (size_t i = 0; ; i++)
+  for (size_t i = 0; ; i++, p++)
     if (i >= tor->peerlist.nbpeers)
       return;
-    else if (!p->conn)
+    else if (!p->conn && !p->fail_count)
       break;
 
   if ((conn->socket = POLLFD(peer_connect(p, CONNECT_TIMEOUT))).fd < 0)
+  {
+    p->fail_count++;
     return;
-  printf("A\n");
+  }
+  p->conn = conn;
+  conn->peer = p;
+  conn->active = true;
+  LOG(L_INFO, "peer_conn", tor, "peer connection activated");
 }
 
 
 void peer_conn_clear(s_peer_conn *conn, bool active)
 {
+  if (conn->peer)
+    conn->peer->conn = NULL;
   memset(conn, 0, sizeof(*conn));
   conn->state_am = PEER_STATE(true, false);
   conn->state_peer = PEER_STATE(true, false);

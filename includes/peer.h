@@ -19,6 +19,7 @@ typedef struct peer
   struct sockaddr_in addr;
   t_peer_id peer_id;
   struct peer_conn *conn;
+  size_t fail_count;
 } s_peer;
 
 

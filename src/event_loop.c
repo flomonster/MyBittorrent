@@ -9,7 +9,7 @@
 
 bool event_loop(s_torrent *tor)
 {
-  s_peer_conn *peer_conns = malloc(PEER_CONN_COUNT * sizeof(*peer_conns));
+  s_peer_conn *peer_conns = calloc(PEER_CONN_COUNT, sizeof(*peer_conns));
   if (!peer_conns)
     return true;
 

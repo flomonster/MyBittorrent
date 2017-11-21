@@ -23,6 +23,7 @@ bool peer_init(s_peer *peer, void *data)
   uint16_t *nport = data;
   peer->addr.sin_port = *nport;
   peer->conn = NULL;
+  peer->fail_count = 0;
   return false;
 }
 
