@@ -30,6 +30,7 @@ static void handle_transmission(s_trans *trans, s_peer_conn *conn,
   case TRANS_ERROR:
   case TRANS_CLOSING:
     LOG(L_INFO, "main", tor, "closed connection");
+    conn->peer->fail_count++;
     peer_conn_clear(conn, false);
     break;
   }
@@ -47,8 +48,8 @@ void peer_conn_init(s_peer_conn *conn, s_torrent *tor, s_poller *pol)
 {
   peer_conn_clear(conn, false);
   s_peer *p = tor->peerlist.peers;
-  for (size_t i = 0; ; i++, p++)
-    if (i >= tor->peerlist.nbpeers)
+  for (; ; p = p->next)
+    if (!p)
       return;
     else if (!p->conn && !p->fail_count)
       break;
