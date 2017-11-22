@@ -83,5 +83,6 @@ void torrent_free(s_torrent *tor)
   metainfo_destroy(&tor->metainfo);
   tracker_destroy(&tor->tracker);
   filelist_destroy(&tor->filelist);
+  free(tor->pieces);
   free(tor);
 }
