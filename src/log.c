@@ -68,10 +68,17 @@ static void prelude_boring(s_btlog_context *context, s_torrent *tor)
 }
 
 
+
+bool btlog_active(e_loglevel level)
+{
+  return !(!((1UL << level) & g_log_config.mask)
+           || level > g_log_config.level);
+}
+
+
 void btlog(s_btlog_context *context, s_torrent *tor, const char *fmt, ...)
 {
-  if (!((1UL << context->level) & g_log_config.mask)
-      || context->level > g_log_config.level)
+  if (!btlog_active(context->level))
     return;
 
   va_list ap;

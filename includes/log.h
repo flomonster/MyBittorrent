@@ -71,7 +71,11 @@ typedef struct btlog_context
 s_logconfig g_log_config;
 
 
+#define LOG_FILE (g_log_config.target)
+
+
 void btlog_init(void);
+bool btlog_active(e_loglevel level);
 void btlog(s_btlog_context *context, struct torrent *tor, const char *fmt, ...);
 
 #define LOG(Level, Component, Torrent, ...)     \

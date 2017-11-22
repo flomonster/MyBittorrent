@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 
@@ -32,3 +33,4 @@ typedef struct peer
 s_peer *peer_create(s_peer **prec, s_peer *next, void *data);
 void peer_free(void *peer);
 int peer_connect(s_peer *peer, struct timeval tv);
+char *peer_format(s_peer *peer);

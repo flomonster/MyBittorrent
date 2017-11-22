@@ -1,13 +1,28 @@
+#include <arpa/inet.h>
 #include <errno.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#include <stdlib.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "netutils.h"
 #include "peer.h"
 #include "rcount.h"
+
+
+char *peer_format(s_peer *peer)
+{
+  char *buffer = malloc(25);
+  if (!buffer)
+    return NULL;
+
+  inet_ntop(AF_INET, &(peer->addr.sin_addr), buffer, 20);
+  sprintf(buffer + strlen(buffer), ":%d", peer->addr.sin_port);
+  return buffer;
+}
 
 
 s_peer *peer_create(s_peer **prec, s_peer *next, void *data)

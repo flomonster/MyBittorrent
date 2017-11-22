@@ -44,9 +44,9 @@ void peerlist_print(FILE *f, s_peerlist *peerlist)
   s_peer *peer = peerlist->peers;
   while (peer)
   {
-    char buffer[20];
-    inet_ntop(AF_INET, &(peer->addr.sin_addr), buffer, 20);
-    fprintf(f, "%s:%d\n", buffer, peer->addr.sin_port);
+    char *buf = peer_format(peer);
+    fprintf(f, "%s\n", buf);
+    free(buf);
     peer = peer->next;
   }
 }

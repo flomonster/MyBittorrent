@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 
 #include "handshake.h"
@@ -62,7 +63,14 @@ void peer_conn_init(s_peer_conn *conn, s_torrent *tor, s_poller *pol)
   p->conn = conn;
   conn->peer = p;
   conn->active = true;
-  LOG(L_INFO, "peer_conn", tor, "peer connection activated");
+
+  if (btlog_active(L_INFO))
+  {
+    char *pf = peer_format(p);
+    LOG(L_INFO, "peer_conn", tor, "peer connection activated -> %s", pf);
+    free(pf);
+  }
+
   handshake_send(tor, conn, &conn->out_trans);
   handshake_receive(tor, conn, &conn->in_trans);
 }
