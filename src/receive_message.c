@@ -70,8 +70,9 @@ t_trans_status receive_body(struct torrent *tor, struct peer_conn *conn,
   if (status != TRANS_DONE)
     return status;
 
+  e_bttype type = conn->header_in.type;
 
-  btlog(g_ctx, tor, "receiving the body, type %02x", conn->header_in.type);
+  btlog(g_ctx, tor, "receiving the body, type %s", bttype_to_string(type));
   conn->header_in.size--; // the type is a byte long
 
   trans_setup(trans, body_cleanup,

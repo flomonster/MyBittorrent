@@ -30,7 +30,8 @@ my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/rcount.c includes/rcount.h \
                         src/decision_send.c includes/decision_send.h \
                         src/decision.c includes/decision.h \
-                        src/receive_message.c
+                        src/receive_message.c includes/receive_message.h \
+                        src/btproto.c includes/btproto.h
 
 
 AM_CPPFLAGS = -iquote includes -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE

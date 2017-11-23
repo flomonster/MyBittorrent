@@ -12,6 +12,30 @@
 #define PROTO_NAME_LEN (sizeof(PROTO_NAME) - 1)
 
 
+#define BTTYPE(F)     \
+  F(CHOKE)            \
+  F(UNCHOKE)          \
+  F(INTERESTED)       \
+  F(NOT_INTERESTED)   \
+  F(HAVE)             \
+  F(BITFIELD)         \
+  F(REQUEST)          \
+  F(PIECE)            \
+  F(CANCEL)           \
+  F(PORT)             \
+  F(INVALID)
+
+
+#define BTTYPE_ENUM(N) BTTYPE_ ## N,
+
+typedef enum bttype
+{
+  BTTYPE(BTTYPE_ENUM)
+} e_bttype;
+
+#undef BTTYPE_ENUM
+
+
 typedef struct bthandshake
 {
   unsigned char plen;
@@ -37,3 +61,6 @@ typedef struct btbuf
     s_bthandshake handshake;
   } data;
 } s_btbuf;
+
+
+const char *bttype_to_string(e_bttype type);
