@@ -4,12 +4,14 @@
 
 #include "bencode.h"
 #include "filelist.h"
+#include "log.h"
 #include "metainfo.h"
 #include "peer.h"
 #include "piece.h"
 #include "server.h"
 #include "torrent.h"
 #include "tracker.h"
+
 
 #define PEER_ID_BEGIN "-MB2020-"
 
@@ -35,6 +37,7 @@ static void arch_init(s_torrent *tor)
   tor->piece_size = bpiece_size->data.i;
   s_bdata *bsha = bdict_find(binfo->data.dict, "pieces");
   tor->nbpieces = bsha->data.str.size / 20;
+  LOG(L_DBG, "torrent", tor, "torrent has %zu pieces", tor->nbpieces);
   tor->pieces = pieces_create(&tor->filelist, binfo,
                               tor->nbpieces, tor->piece_size);
 }
