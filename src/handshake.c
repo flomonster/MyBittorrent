@@ -3,6 +3,8 @@
 #include "torrent.h"
 #include "peer_conn.h"
 #include "decision_send.h"
+#include "receive_message.h"
+
 
 #include <string.h>
 
@@ -38,7 +40,7 @@ static t_trans_status handshake_receive_full(struct torrent *tor,
   }
   LOG(L_NETDBG, "handshake", tor, "full handshake received");
   // TODO: actual callback action
-  trans_setup(trans, decision_send, &hs->pstr, sizeof(s_bthandshake) - 1);
+  trans_setup(trans, receive_message, &hs->pstr, sizeof(s_bthandshake) - 1);
   return TRANS_DONE;
 }
 
