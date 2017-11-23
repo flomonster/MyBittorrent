@@ -53,11 +53,8 @@ typedef struct peer_conn
   s_trans in_trans;
   s_trans out_trans;
 
-  s_btheader header_in;
-  s_btheader header_out;
-
-  s_bthandshake handshake_in;
-  s_bthandshake handshake_out;
+  s_btbuf in_buf;
+  s_btbuf out_buf;
 } s_peer_conn;
 
 
