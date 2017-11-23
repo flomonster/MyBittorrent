@@ -11,6 +11,7 @@
 #include "netutils.h"
 #include "peer.h"
 #include "rcount.h"
+#include "torrent.h"
 
 
 char *peer_format(s_peer *peer)
@@ -25,11 +26,12 @@ char *peer_format(s_peer *peer)
 }
 
 
-s_peer *peer_create(s_peer **prec, s_peer *next, void *data)
+s_peer *peer_create(s_peer **prec, s_peer *next, s_torrent *tor, void *data)
 {
   s_peer *peer = rcount_malloc(sizeof (s_peer), peer_free);
   if (!peer)
     return NULL;
+
   peer->next = next;
   peer->prec = prec;
   peer->pieces = NULL;
@@ -45,6 +47,7 @@ s_peer *peer_create(s_peer **prec, s_peer *next, void *data)
   peer->addr.sin_port = *nport;
   peer->conn = NULL;
   peer->fail_count = 0;
+  peer->pieces = bitset_create(tor->nbpieces);
   return peer;
 }
 

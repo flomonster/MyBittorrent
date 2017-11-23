@@ -19,7 +19,7 @@ int torrent_mode(int argc, char *argv[])
       warnx("cannot fetch announcement");
     else
     {
-      if (peerlist_init(&tor->peerlist, ann))
+      if (peerlist_init(&tor->peerlist, tor, ann))
         return EXIT_FAILURE;
       int res = event_loop(tor);
       if (res)
@@ -54,7 +54,7 @@ int dump_peers_mode(int argc, char *argv[])
     s_announce *ann = tracker_announce(tor, "started");
     if (!ann)
       warnx("cannot fetch announcement");
-    else if (peerlist_init(&tor->peerlist, ann))
+    else if (peerlist_init(&tor->peerlist, tor, ann))
       return EXIT_FAILURE;
     else
       peerlist_print(stdout, &tor->peerlist);

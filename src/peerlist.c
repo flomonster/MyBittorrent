@@ -10,7 +10,7 @@
 #include "rcount.h"
 
 
-bool peerlist_init(s_peerlist *peerlist, s_announce *announce)
+bool peerlist_init(s_peerlist *peerlist, s_torrent *tor, s_announce *announce)
 {
   assert(announce->bencoded->type == BDICT);
   s_bdata *bpeers = bdict_find(announce->bencoded->data.dict, "peers");
@@ -20,15 +20,16 @@ bool peerlist_init(s_peerlist *peerlist, s_announce *announce)
   peerlist->peers = NULL;
 
   for (size_t i = 0; i < nbpeers; i++)
-    if (peerlist_append(peerlist, bpeers->data.str.data + i * 6))
+    if (peerlist_append(peerlist, tor, bpeers->data.str.data + i * 6))
       return true;
   return false;
 }
 
 
-bool peerlist_append(s_peerlist *peerlist, void *data)
+bool peerlist_append(s_peerlist *peerlist, s_torrent *tor, void *data)
 {
-  s_peer *peer = peer_create(&peerlist->peers, peerlist->peers, data);
+  s_peer *peer = peer_create(&peerlist->peers,
+                             peerlist->peers, tor, data);
   if (!peer)
     return true;
   peerlist->nbpeers++;

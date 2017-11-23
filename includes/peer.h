@@ -13,6 +13,7 @@
 typedef char t_peer_id[20];
 
 struct peer_conn;
+struct torrent;
 
 typedef struct peer
 {
@@ -30,7 +31,8 @@ typedef struct peer
 ** \param data a 6-bytes peer data block
 **  as described in bep 23.
 */
-s_peer *peer_create(s_peer **prec, s_peer *next, void *data);
+s_peer *peer_create(s_peer **prec, s_peer *next,
+                    struct torrent *tor, void *data);
 void peer_free(void *peer);
 int peer_connect(s_peer *peer, struct timeval tv);
 char *peer_format(s_peer *peer);

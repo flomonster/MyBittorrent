@@ -5,20 +5,28 @@
 #include "bitset.h"
 
 
-s_bitset *bitset_create(size_t size, char *data)
+s_bitset *bitset_create(size_t size)
 {
   size_t bcount = (size + (CHAR_BIT - 1)) / CHAR_BIT;
   s_bitset *ret = malloc(sizeof(*ret) + bcount);
   if (!ret)
     return NULL;
 
-  ret->count = size;
-  if (data)
-    memcpy(&ret->data, data, bcount);
-  else
-    memset(&ret->data, 0, bcount);
+  ret->count = bcount;
+  memset(&ret->data, 0, bcount);
   return ret;
 }
+
+
+bool bitset_update(s_bitset *bset, char *buf, size_t size)
+{
+  if (size > bset->count)
+    return true;
+
+  memcpy(bset->data, buf, size);
+  return false;
+}
+
 
 
 #define BIT_OFF(I) (CHAR_BIT - 1 - (I) % CHAR_BIT)
