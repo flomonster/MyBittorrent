@@ -31,6 +31,7 @@ my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/decision_send.c includes/decision_send.h \
                         src/decision.c includes/decision.h \
                         src/receive_message.c includes/receive_message.h \
+                        src/receive_bitset.c includes/receive_bitset.h \
                         src/btproto.c includes/btproto.h
 
 

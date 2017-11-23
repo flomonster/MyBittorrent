@@ -3,6 +3,7 @@
 #include "peer_conn.h"
 #include "torrent.h"
 #include "transmission.h"
+#include "receive_bitset.h"
 
 #include <stdlib.h>
 
@@ -43,6 +44,7 @@ t_trans_status receive_type(struct torrent *tor, struct peer_conn *conn,
     return receive_message(tor, conn, trans, status);
 
   conn->header_in.size = ntohl(conn->header_in.size);
+
   btlog(g_ctx, tor, "receiving the type, message size is %lu",
         conn->header_in.size);
 
@@ -71,9 +73,18 @@ t_trans_status receive_body(struct torrent *tor, struct peer_conn *conn,
     return status;
 
   e_bttype type = conn->header_in.type;
+  if (type >= BTTYPE_INVALID)
+  {
+    LOG(L_ERR, "receive_body", tor, "invalid message type %02x", type);
+    return TRANS_CLOSING;
+  }
 
   btlog(g_ctx, tor, "receiving the body, type %s", bttype_to_string(type));
   conn->header_in.size--; // the type is a byte long
+
+  if (type == BTTYPE_BITFIELD)
+    return receive_bitset(tor, conn, trans, status);
+
 
   trans_setup(trans, body_cleanup,
               malloc(conn->header_in.size), // TODO: actual buffering
