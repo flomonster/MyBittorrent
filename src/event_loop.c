@@ -7,7 +7,7 @@
 
 #define MAX_EVENTS 60
 #define TIMEOUT 5
-#define LOOP_MAX 10000
+#define LOOP_MAX 100000
 
 
 bool event_loop(s_torrent *tor)
@@ -31,7 +31,6 @@ bool event_loop(s_torrent *tor)
       else
         peer_conn_init(&peer_conns[i], tor, &poller);
     i++;
-    sleep(1);
   } while (i < LOOP_MAX && !poller_update(&poller, tor, TIMEOUT));
 
   if (i == LOOP_MAX)

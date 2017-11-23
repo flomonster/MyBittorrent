@@ -10,10 +10,10 @@ t_trans_status decision_send(struct torrent *tor, struct peer_conn *conn,
 {
   (void)conn;
   (void)trans;
+  (void)tor;
 
-
-  LOG(L_DBG, "decision_send", tor, "iddling in %s",
-      TRANS_IS_SEND(trans) ? "send" : "recv");
+  /* LOG(L_DBG, "decision_send", tor, "iddling in %s", */
+  /*     TRANS_IS_SEND(trans) ? "send" : "recv"); */
 
   if (status != TRANS_DONE)
     return status;
