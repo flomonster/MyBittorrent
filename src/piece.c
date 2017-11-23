@@ -122,3 +122,22 @@ bool block_write(s_torrent *tor, void *data, size_t size, size_t off)
   }
   return false;
 }
+
+
+void *piece_get_buffer(s_torrent *tor, s_piece *piece, size_t offset,
+                       size_t *size)
+{
+  *size = piece->size - offset;
+  size_t f = piece->file;
+  size_t piece_offset = (piece - tor->pieces) * tor->piece_size;
+  offset += piece_offset - tor->filelist.files[f].offset;
+  while (offset > tor->filelist.files[f].size)
+  {
+    offset -= tor->filelist.files[f].size;
+    f++;
+  }
+  char *data = tor->filelist.files[f].data;
+  data += offset;
+  *size = MIN(tor->filelist.files[f].size - offset, *size);
+  return data;
+}
