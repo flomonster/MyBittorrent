@@ -29,7 +29,8 @@ static void handle_transmission(s_trans *trans, s_peer_conn *conn,
     break;
   case TRANS_ERROR:
   case TRANS_CLOSING:
-    LOG(L_INFO, "main", tor, "closed connection");
+    LOG(L_NETDBG, "event_loop", tor, "closed connection");
+    // TODO: close the socket ?
     conn->peer->fail_count++;
     peer_conn_clear(conn, false);
     break;
