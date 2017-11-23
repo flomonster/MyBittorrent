@@ -76,11 +76,11 @@ bool btlog_active(e_loglevel level)
 }
 
 
-void btlog(const s_btlog_context *context, s_torrent *tor,
-           const char *fmt, ...)
+bool btlog(const s_btlog_context *context, s_torrent *tor,
+          const char *fmt, ...)
 {
   if (!btlog_active(context->level))
-    return;
+    return false;
 
   va_list ap;
   va_start(ap, fmt);
@@ -90,4 +90,5 @@ void btlog(const s_btlog_context *context, s_torrent *tor,
   fputc('\n', g_log_config.target);
 
   va_end(ap);
+  return true;
 }
