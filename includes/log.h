@@ -76,7 +76,8 @@ s_logconfig g_log_config;
 
 void btlog_init(void);
 bool btlog_active(e_loglevel level);
-void btlog(s_btlog_context *context, struct torrent *tor, const char *fmt, ...);
+void btlog(const s_btlog_context *context, struct torrent *tor,
+           const char *fmt, ...);
 
 #define LOG(Level, Component, Torrent, ...)     \
   btlog(&LCTX((Level), (Component)), (Torrent), __VA_ARGS__)

@@ -42,7 +42,7 @@ static void print_torrent_sha(s_torrent *tor)
 }
 
 
-static void prelude_fancy(s_btlog_context *context, s_torrent *tor)
+static void prelude_fancy(const s_btlog_context *context, s_torrent *tor)
 {
   if (tor)
   {
@@ -57,7 +57,7 @@ static void prelude_fancy(s_btlog_context *context, s_torrent *tor)
 }
 
 
-static void prelude_boring(s_btlog_context *context, s_torrent *tor)
+static void prelude_boring(const s_btlog_context *context, s_torrent *tor)
 {
   if (tor)
   {
@@ -76,7 +76,8 @@ bool btlog_active(e_loglevel level)
 }
 
 
-void btlog(s_btlog_context *context, s_torrent *tor, const char *fmt, ...)
+void btlog(const s_btlog_context *context, s_torrent *tor,
+           const char *fmt, ...)
 {
   if (!btlog_active(context->level))
     return;
