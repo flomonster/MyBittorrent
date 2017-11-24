@@ -12,7 +12,7 @@
 void handshake_send(struct torrent *tor, struct peer_conn *conn,
                     struct trans *trans)
 {
-  s_bthandshake *hs = &conn->out_buf.data.handshake;
+  s_bthandshake *hs = &conn->out_buf.handshake;
   hs->plen = PROTO_NAME_LEN;
   memcpy(hs->pstr, PROTO_NAME, PROTO_NAME_LEN);
   memset(hs->reserved, 0, 8);
@@ -31,7 +31,7 @@ static t_trans_status handshake_receive_full(struct torrent *tor,
   if (status != TRANS_DONE)
     return status;
 
-  s_bthandshake *hs = &conn->out_buf.data.handshake;
+  s_bthandshake *hs = &conn->out_buf.handshake;
   if (hs->plen != 19)
   {
     LOG(L_NETDBG, "handshake", tor, "mismatched proto string length");
@@ -49,7 +49,7 @@ void handshake_receive(struct torrent *tor, struct peer_conn *conn,
                        struct trans *trans)
 {
   LOG(L_NETDBG, "handshake", tor, "reading the handshake proto string length");
-  s_bthandshake *hs = &conn->in_buf.data.handshake;
+  s_bthandshake *hs = &conn->in_buf.handshake;
   // first receive the protocol string length
   trans_setup(trans, handshake_receive_full, &hs->plen, 1);
 }

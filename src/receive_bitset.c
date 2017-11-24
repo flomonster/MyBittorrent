@@ -40,10 +40,10 @@ t_trans_status receive_bitset(struct torrent *tor, struct peer_conn *conn,
 
 
   size_t bitset_size = conn->peer->pieces->count;
-  if (conn->in_buf.data.header.size > bitset_size)
+  if (conn->in_buf.header.size > bitset_size)
   {
     LOG(L_ERR, "receive_bitset", tor, "cannot receive bitset of size %zu,"
-        "buffer has size %zu", conn->in_buf.data.header.size, bitset_size);
+        "buffer has size %zu", conn->in_buf.header.size, bitset_size);
     return TRANS_CLOSING; // TODO: close the connection on trans_closing
   }
 
@@ -51,7 +51,7 @@ t_trans_status receive_bitset(struct torrent *tor, struct peer_conn *conn,
 
   trans_setup(trans, receive_bitset_ack,
               conn->peer->pieces->data,
-              conn->in_buf.data.header.size);
+              conn->in_buf.header.size);
   return TRANS_RETRY;
 
 }

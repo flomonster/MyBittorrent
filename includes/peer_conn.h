@@ -53,8 +53,8 @@ typedef struct peer_conn
   s_trans in_trans;
   s_trans out_trans;
 
-  s_btbuf in_buf;
-  s_btbuf out_buf;
+  u_btbuf in_buf;
+  u_btbuf out_buf;
 } s_peer_conn;
 
 

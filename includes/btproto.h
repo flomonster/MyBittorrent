@@ -53,14 +53,13 @@ typedef struct btheader
 } ATTR(packed) s_btheader;
 
 
-typedef struct btbuf
+
+typedef union
 {
-  union
-  {
-    s_btheader header;
-    s_bthandshake handshake;
-  } data;
-} s_btbuf;
+  s_btheader header;
+  s_bthandshake handshake;
+  uint32_t have_id;
+} u_btbuf;
 
 
 const char *bttype_to_string(e_bttype type);
