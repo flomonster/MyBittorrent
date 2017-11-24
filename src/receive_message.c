@@ -5,6 +5,8 @@
 #include "transmission.h"
 #include "receive_bitset.h"
 #include "receive_have.h"
+#include "receive_choke.h"
+#include "receive_interested.h"
 
 #include <stdlib.h>
 
@@ -67,6 +69,20 @@ static inline t_trans_status body_cleanup(struct torrent *tor,
 }
 
 
+static const f_trans_callback g_message_handlers[] =
+{
+  receive_choke,
+  receive_unchoke,
+  receive_interested,
+  receive_not_interested,
+  receive_have,
+  receive_bitset,
+  NULL, // piece
+  NULL, // cancel
+  NULL, // port
+};
+
+
 t_trans_status receive_body(struct torrent *tor, struct peer_conn *conn,
                             struct trans *trans, t_trans_status status)
 {
@@ -83,11 +99,10 @@ t_trans_status receive_body(struct torrent *tor, struct peer_conn *conn,
   btlog(g_ctx, tor, "receiving the body, type %s", bttype_to_string(type));
   conn->in_buf.header.size--; // the type is a byte long
 
-  if (type == BTTYPE_BITFIELD)
-    return receive_bitset(tor, conn, trans, status);
-  if (type == BTTYPE_HAVE)
-    return receive_have(tor, conn, trans, status);
+  if (type < BTTYPE_INVALID && g_message_handlers[type])
+    return g_message_handlers[type](tor, conn, trans, status);
 
+  LOG(L_WARN, "receive_body", tor, "unknown type %s", bttype_to_string(type));
 
   trans_setup(trans, body_cleanup,
               malloc(conn->in_buf.header.size), // TODO: actual buffering

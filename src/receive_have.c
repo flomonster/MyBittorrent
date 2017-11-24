@@ -6,6 +6,8 @@
 #include "receive_message.h"
 #include "bitset.h"
 
+#include "receive_have.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -36,7 +38,7 @@ static inline t_trans_status receive_have_ack(struct torrent *tor,
 
 
 t_trans_status receive_have(struct torrent *tor, struct peer_conn *conn,
-                              struct trans *trans, t_trans_status status)
+                            struct trans *trans, t_trans_status status)
 {
   if (status != TRANS_DONE)
     return status;
@@ -53,5 +55,4 @@ t_trans_status receive_have(struct torrent *tor, struct peer_conn *conn,
 
   trans_setup(trans, receive_have_ack, &conn->in_buf.have_id, 4);
   return TRANS_RETRY;
-
 }
