@@ -4,6 +4,7 @@
 #include "torrent.h"
 #include "transmission.h"
 #include "receive_bitset.h"
+#include "receive_have.h"
 
 #include <stdlib.h>
 
@@ -84,6 +85,8 @@ t_trans_status receive_body(struct torrent *tor, struct peer_conn *conn,
 
   if (type == BTTYPE_BITFIELD)
     return receive_bitset(tor, conn, trans, status);
+  if (type == BTTYPE_HAVE)
+    return receive_have(tor, conn, trans, status);
 
 
   trans_setup(trans, body_cleanup,
