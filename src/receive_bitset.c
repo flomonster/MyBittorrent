@@ -19,10 +19,7 @@ static inline t_trans_status receive_bitset_ack(struct torrent *tor,
 {
   if (btlog_active(L_SNETDBG))
   {
-    char *buf = malloc(tor->nbpieces + 1);
-    buf[tor->nbpieces] = 0;
-    for (size_t i = 0; i < tor->nbpieces; i++)
-      buf[i] = bitset_get(conn->peer->pieces, i) ? '1' : '0';
+    char *buf = bitset_to_string(conn->peer->pieces); // TODO: error handling
     LOG(L_SNETDBG, "receive_bitset", tor, "received bitset: %s", buf);
     free(buf);
   }
@@ -39,7 +36,7 @@ t_trans_status receive_bitset(struct torrent *tor, struct peer_conn *conn,
     return status;
 
 
-  size_t bitset_size = conn->peer->pieces->count;
+  size_t bitset_size = BITSET_BSIZE(conn->peer->pieces->size);
   if (conn->in_buf.header.size > bitset_size)
   {
     LOG(L_ERR, "receive_bitset", tor, "cannot receive bitset of size %zu,"

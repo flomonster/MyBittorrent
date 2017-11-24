@@ -19,7 +19,7 @@ my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/path.c includes/path.h \
                         src/announce.c includes/announce.h \
                         src/log.c src/log.h \
-                        src/bitset.c includes/bitset.h \
+                        src/bitset.c src/bitset_print.c includes/bitset.h \
                         src/poller.c includes/poller.h \
                         src/event_loop.c includes/event_loop.h \
                         src/peer_conn.c includes/peer_conn.h \

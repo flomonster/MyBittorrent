@@ -7,12 +7,12 @@
 
 s_bitset *bitset_create(size_t size)
 {
-  size_t bcount = (size + (CHAR_BIT - 1)) / CHAR_BIT;
+  size_t bcount = BITSET_BSIZE(size);
   s_bitset *ret = malloc(sizeof(*ret) + bcount);
   if (!ret)
     return NULL;
 
-  ret->count = bcount;
+  ret->size = size;
   memset(&ret->data, 0, bcount);
   return ret;
 }
@@ -20,7 +20,7 @@ s_bitset *bitset_create(size_t size)
 
 bool bitset_update(s_bitset *bset, char *buf, size_t size)
 {
-  if (size > bset->count)
+  if (size > BITSET_BSIZE(bset->size))
     return true;
 
   memcpy(bset->data, buf, size);
