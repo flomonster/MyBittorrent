@@ -3,11 +3,12 @@
 
 #include "event_loop.h"
 #include "log.h"
+#include "signal_handler.h"
 
 
 #define MAX_EVENTS 60
 #define TIMEOUT 5
-#define LOOP_MAX 100000
+#define LOOP_MAX 1000
 
 
 bool event_loop(s_torrent *tor)
@@ -25,13 +26,16 @@ bool event_loop(s_torrent *tor)
 
   size_t i = 0;
   do { // TODO: update the peer list if needed
-    for (size_t i = 0; i < PEER_CONN_COUNT; i++)
+    for (size_t i = 0; g_running && i < PEER_CONN_COUNT; i++)
       if (peer_conns[i].active)
         peer_conn_trade(&peer_conns[i], tor);
       else
         peer_conn_init(&peer_conns[i], tor, &poller);
     i++;
-  } while (i < LOOP_MAX && !poller_update(&poller, tor, TIMEOUT));
+  } while (g_running && i < LOOP_MAX && !poller_update(&poller, tor, TIMEOUT));
+
+  if (!g_running)
+    LOG(L_WARN, "eloop", tor, "stopped event loop because of signal");
 
   if (i == LOOP_MAX)
     LOG(L_WARN, "eloop", tor,

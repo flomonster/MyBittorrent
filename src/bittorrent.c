@@ -7,6 +7,7 @@
 #include "announce.h"
 #include "torrent.h"
 #include "event_loop.h"
+#include "signal_handler.h"
 
 
 int torrent_mode(int argc, char *argv[])
@@ -21,6 +22,8 @@ int torrent_mode(int argc, char *argv[])
     {
       if (peerlist_init(&tor->peerlist, tor, ann))
         return EXIT_FAILURE;
+
+      signal_handler_register();
       int res = event_loop(tor);
       if (res)
         return res;
