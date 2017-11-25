@@ -50,6 +50,7 @@ static void piece_check(s_piece *pieces, s_filelist *filelist,
   size_t sfile = filelist->files[file].offset;
   SHA_CTX c;
   SHA1_Init(&c);
+
   while (sfile < target)
   {
     char *data = filelist->files[file].data;
@@ -60,10 +61,11 @@ static void piece_check(s_piece *pieces, s_filelist *filelist,
     sfile += filesize;
     file++;
   }
+
   unsigned char piece_sha[SHA_DIGEST_LENGTH];
   void *md = piece_sha;
   SHA1_Final(md, &c);
-  if (!strncmp(md, pieces[piece].sha, 20))
+  if (!memcmp(md, pieces[piece].sha, 20))
     pieces[piece].state = PIECE_AVAILABLE;
 }
 
