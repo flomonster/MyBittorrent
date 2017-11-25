@@ -13,9 +13,12 @@ This is the list of features to implement:
       * [x] Initial transmissions
         * [x] Sending side: header send
         * [x] Receiving side: header parse
-      * [ ] Full flowgraph
-    * [ ] Single-file torrents
-    * [ ] Multi-files torrents
+      * [x] Full flowgraph
+    * [x] Single-file torrents
+    * [x] Multi-files torrents
+    * [ ] Stats
+    * [ ] Tracker status update
+    * [ ] Uninteresting connection closing
   * [ ] Seeding
 * Advanced features
   * [ ] Multiple torrents
