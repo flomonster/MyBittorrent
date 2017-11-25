@@ -37,7 +37,7 @@ static void print_hex_byte(void *data)
 
 static void print_torrent_sha(s_torrent *tor)
 {
-  for (unsigned i = 0; i < 6; i++)
+  for (unsigned i = 0; i < 3; i++)
     print_hex_byte(tor->metainfo.sha + i);
 }
 

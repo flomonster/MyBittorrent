@@ -15,6 +15,9 @@ typedef enum piece_state
 } e_piece_state;
 
 
+#define PIECE_INDEX(Piece, Tor) ((Piece) - (Tor)->pieces)
+
+
 typedef struct piece
 {
   e_piece_state state;
@@ -27,9 +30,7 @@ typedef struct piece
 
   // total piece size
   size_t size;
-
-  // number of retrieved blocks
-  size_t block_done;
+  size_t block_count;
 } s_piece;
 
 

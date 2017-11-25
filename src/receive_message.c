@@ -7,11 +7,12 @@
 #include "receive_have.h"
 #include "receive_choke.h"
 #include "receive_interested.h"
+#include "receive_piece.h"
 
 #include <stdlib.h>
 
 
-static const s_btlog_context *g_ctx = &LCTX(L_NETDBG, "receive_header");
+static const s_btlog_context *g_ctx = &LCTX(L_LNETDBG, "recv_msg");
 
 
 t_trans_status receive_body(struct torrent *tor, struct peer_conn *conn,
@@ -77,7 +78,8 @@ static const f_trans_callback g_message_handlers[] =
   receive_not_interested,
   receive_have,
   receive_bitset,
-  NULL, // piece
+  NULL,
+  receive_piece,
   NULL, // cancel
   NULL, // port
 };

@@ -15,6 +15,7 @@ typedef struct peer_state
   bool interested;
 } s_peer_state;
 
+
 #define PEER_STATE(Choking, Interested)         \
   (s_peer_state)                                \
   {                                             \
@@ -44,9 +45,17 @@ typedef struct peer_conn
 
   u_btbuf in_buf;
   u_btbuf out_buf;
+
+  // if true, decision_send will ask for new blocks
+  bool ask_blocks;
+
+  // the tick of the last send block request
+  size_t last_req_tick;
+  s_bitset *blocks;
 } s_peer_conn;
 
 
+void peer_conn_free(s_peer_conn *conn);
 void peer_conn_trade(s_peer_conn *conn, s_torrent *tor);
 void peer_conn_init(s_peer_conn *conn, s_torrent *tor, s_poller *pol);
 void peer_conn_clear(s_peer_conn *conn, bool active);

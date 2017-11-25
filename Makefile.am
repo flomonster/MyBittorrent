@@ -36,7 +36,9 @@ my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/receive_have.c includes/receive_have.h \
                         src/receive_interested.c includes/receive_interested.h \
                         src/receive_choke.c includes/receive_choke.h \
-                        src/signal_handler.c includes/signal_handler.h
+                        src/receive_piece.c includes/receive_piece.h \
+                        src/signal_handler.c includes/signal_handler.h \
+                        src/btstats.c includes/btstats.h
 
 
 

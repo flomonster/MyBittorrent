@@ -64,7 +64,8 @@ void *path_map(s_path *path, size_t size, int dir_fd, bool *exist)
         return NULL;
       }
 
-    void *res = mmap(NULL, size, PROT_WRITE | PROT_READ, MAP_PRIVATE, fd, 0);
+    void *res = mmap(NULL, size, PROT_WRITE | PROT_READ, MAP_SHARED, fd, 0);
+    close(fd);
     return res == MAP_FAILED ? NULL : res;
   }
 

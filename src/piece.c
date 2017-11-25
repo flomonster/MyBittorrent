@@ -3,13 +3,12 @@
 #include <string.h>
 
 #include "bencode.h"
+#include "block.h"
 #include "filelist.h"
 #include "piece.h"
-#include "torrent.h"
 #include "sha.h"
-
-#define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
-#define MAX(X, Y) ((X) > (Y) ? (X) : (Y))
+#include "torrent.h"
+#include "mathutils.h"
 
 
 struct data_loop
@@ -36,7 +35,7 @@ static void piece_init(s_piece *piece, size_t file, size_t size, char *sha)
   piece->file = file;
   piece->state = PIECE_MISSING;
   piece->size = size;
-  piece->block_done = 0;
+  piece->block_count = REQUIRED_BLOCKS(size);
   strncpy(piece->sha, sha, 20);
 }
 

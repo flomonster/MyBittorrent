@@ -67,12 +67,13 @@ bool poller_update(s_poller *pol, s_torrent *tor, int timeout)
       close(cur_pfd->fd);
     else
     {
-      if (event->events & EPOLLIN)
-        LOG(L_NETDBG, "poller", tor, "input notification on fd %d", cur_pfd->fd);
+      (void)tor;
+      /* if (event->events & EPOLLIN) */
+      /*   LOG(L_NETDBG, "poller", tor, "input notification on fd %d", cur_pfd->fd); */
       cur_pfd->can_recv |= event->events & EPOLLIN;
 
-      if (event->events & EPOLLOUT)
-        LOG(L_NETDBG, "poller", tor, "output notification on fd %d", cur_pfd->fd);
+      /* if (event->events & EPOLLOUT) */
+      /*   LOG(L_NETDBG, "poller", tor, "output notification on fd %d", cur_pfd->fd); */
       cur_pfd->can_send |= event->events & EPOLLOUT;
     }
   }

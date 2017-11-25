@@ -26,7 +26,8 @@ struct torrent;
   F(SINFO,  COLOR_YELLOW)  \
   F(DBG,    COLOR_MAGENTA) \
   F(NETDBG, COLOR_CYAN)    \
-  F(SNETDBG, COLOR_CYAN)
+  F(SNETDBG, COLOR_CYAN)   \
+  F(LNETDBG, COLOR_CYAN)
 
 
 #define LOGLEVEL_ENUM(Name, Color)  \

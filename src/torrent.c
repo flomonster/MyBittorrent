@@ -76,6 +76,9 @@ s_torrent *torrent_create(const char *path, bool init_arch)
     torrent->pieces = NULL;
   }
 
+  if (!btstats_init(&torrent->stats, torrent))
+    errx(2, "torrent_create: btstats_init failed");
+
   return torrent;
 }
 
@@ -86,6 +89,7 @@ void torrent_free(s_torrent *tor)
   metainfo_destroy(&tor->metainfo);
   tracker_destroy(&tor->tracker);
   filelist_destroy(&tor->filelist);
+  btstats_destroy(&tor->stats);
   free(tor->pieces);
   free(tor);
 }

@@ -9,7 +9,7 @@
 
 
 
-static const s_btlog_context *g_ctx = &LCTX(L_NETDBG, "receive_choke");
+static const s_btlog_context *g_ctx = &LCTX(L_LNETDBG, "receive_choke");
 
 
 t_trans_status receive_choke(struct torrent *tor, struct peer_conn *conn,

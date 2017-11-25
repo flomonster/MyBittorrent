@@ -30,7 +30,6 @@ static void handle_transmission(s_trans *trans, s_peer_conn *conn,
   case TRANS_ERROR:
   case TRANS_CLOSING:
     LOG(L_NETDBG, "event_loop", tor, "closed connection");
-    // TODO: close the socket ?
     conn->peer->fail_count++;
     peer_conn_clear(conn, false);
     break;
@@ -75,6 +74,12 @@ void peer_conn_init(s_peer_conn *conn, s_torrent *tor, s_poller *pol)
 
   handshake_send(tor, conn, &conn->out_trans);
   handshake_receive(tor, conn, &conn->in_trans);
+}
+
+
+void peer_conn_free(s_peer_conn *conn)
+{
+  bitset_free(conn->blocks);
 }
 
 

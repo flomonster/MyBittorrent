@@ -3,6 +3,7 @@
 #include "transmission.h"
 
 #include <assert.h>
+#include <unistd.h>
 
 
 // this is the maximum number of bytes a single session can transmit
@@ -25,6 +26,14 @@ static inline t_trans_status trans_callback(struct torrent *tor,
 }
 
 
+t_trans_status trans_handle_error(s_peer_conn *conn, t_trans_status status)
+{
+  if (status <= 0 && !(status == TRANS_RETRY || status == TRANS_DONE))
+    close(conn->socket.fd);
+  return status;
+}
+
+
 t_trans_status transmit(s_trans *trans, struct peer_conn *conn,
                         struct torrent *tor)
 {
@@ -37,8 +46,7 @@ t_trans_status transmit(s_trans *trans, struct peer_conn *conn,
     {
       if (res == TRANS_RETRY)
         return res;
-      else
-        return trans_callback(tor, conn, trans, res);
+      return trans_handle_error(conn, trans_callback(tor, conn, trans, res));
     }
     trans->transmitted += res;
   }
@@ -46,7 +54,7 @@ t_trans_status transmit(s_trans *trans, struct peer_conn *conn,
   assert(trans->transmitted == trans->total);
   trans->transmitted = trans->total = 0;
 
-  return trans_callback(tor, conn, trans, TRANS_DONE);
+  return trans_handle_error(conn, trans_callback(tor, conn, trans, TRANS_DONE));
 }
 
 

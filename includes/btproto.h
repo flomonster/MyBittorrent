@@ -86,12 +86,24 @@ typedef struct btrequest
   }
 
 
+typedef struct btpiece
+{
+  s_btheader header;
+  uint32_t index;
+  uint32_t begin;
+} ATTR(packed) s_btpiece;
+
+
+
+#define REQUESTS_BUF_MAX 3
 
 typedef union
 {
   s_btheader header;
-  s_btrequest request;
+  s_btrequest requests[REQUESTS_BUF_MAX];
   s_bthandshake handshake;
+  // the piece shares the received header
+  s_btpiece piece;
   uint32_t have_id;
 } u_btbuf;
 
