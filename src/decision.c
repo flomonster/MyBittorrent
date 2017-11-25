@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 
-size_t select_piece(s_peer *peer, s_torrent *tor)
+s_piece *select_piece(s_peer *peer, s_torrent *tor)
 {
   size_t *counter = calloc(sizeof(size_t), tor->nbpieces);
 
@@ -31,5 +31,7 @@ size_t select_piece(s_peer *peer, s_torrent *tor)
 
   free(counter);
 
-  return best;
+  if (score == SIZE_MAX)
+    return NULL;
+  return &tor->pieces[best];
 }

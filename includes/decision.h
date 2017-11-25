@@ -4,4 +4,4 @@
 #include "torrent.h"
 
 
-size_t select_piece(s_peer *peer, s_torrent *tor);
+s_piece *select_piece(s_peer *peer, s_torrent *tor);

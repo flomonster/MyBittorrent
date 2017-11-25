@@ -8,10 +8,11 @@
 #include "piece.h"
 #include "server.h"
 #include "tracker.h"
+#include "btstats.h"
+
 
 typedef enum torrent_state
 {
-  T_STARTING,
   T_RUNNING,
   T_COMPLETE,
 } e_torrent_state;
@@ -29,6 +30,7 @@ typedef struct torrent
   size_t piece_size;
   size_t nbpieces;
   s_filelist filelist;
+  s_btstats stats;
 } s_torrent;
 
 

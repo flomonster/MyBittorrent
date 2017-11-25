@@ -32,6 +32,7 @@ static inline t_trans_status receive_have_ack(struct torrent *tor,
   }
 
   bitset_set(conn->peer->pieces, piece_id, true);
+  conn->pieces_changed = true;
   return receive_message(tor, conn, trans, status);
 }
 

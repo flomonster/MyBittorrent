@@ -58,7 +58,7 @@ s_torrent *torrent_create(const char *path, bool init_arch)
   if (tracker_init(&torrent->tracker, &torrent->metainfo))
     errx(2, "torrent_create: tracker_init failed");
 
-  torrent->state = T_STARTING;
+  torrent->state = T_RUNNING;
 
   if (server_init(&torrent->server))
     errx(2, "torrent_create: server_init failed");

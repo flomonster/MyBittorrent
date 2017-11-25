@@ -6,18 +6,7 @@
 #include "btproto.h"
 #include "torrent.h"
 #include "transmission.h"
-
-
-typedef struct piece_ex
-{
-  s_piece *piece;
-
-  // index of the current block inside the piece
-  size_t block;
-
-  // offset inside the block
-  size_t off;
-} s_piece_ex;
+#include "piece_ex.h"
 
 
 typedef struct peer_state
@@ -25,7 +14,6 @@ typedef struct peer_state
   bool choking;
   bool interested;
 } s_peer_state;
-
 
 #define PEER_STATE(Choking, Interested)         \
   (s_peer_state)                                \
@@ -41,6 +29,7 @@ typedef struct peer_conn
 
   s_peer *peer;
   s_bitset *pieces;
+  bool pieces_changed;
 
   s_peer_state state_am;
   s_peer_state state_peer;

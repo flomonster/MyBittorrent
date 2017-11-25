@@ -24,6 +24,7 @@ static inline t_trans_status receive_bitset_ack(struct torrent *tor,
     free(buf);
   }
 
+  conn->pieces_changed = true;
   return receive_message(tor, conn, trans, status);
 }
 
