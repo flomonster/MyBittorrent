@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <arpa/inet.h>
 
 #include "attr.h"
 #include "sha.h"
@@ -53,10 +54,43 @@ typedef struct btheader
 } ATTR(packed) s_btheader;
 
 
+#define BTHEADER(Size, Type)                    \
+  (s_btheader)                                  \
+  {                                             \
+    .size = htonl(Size),                        \
+    .type = (Type),                             \
+  }
+
+
+#define BTSIMPLE(Type) \
+  BTHEADER(sizeof(s_btheader) - 4, Type)
+
+
+typedef struct btrequest
+{
+  s_btheader header;
+  uint32_t index;
+  uint32_t begin;
+  uint32_t length;
+} ATTR(packed) s_btrequest;
+
+
+#define BTREQUEST(Index, Begin, Length)         \
+  (s_btrequest)                                 \
+  {                                             \
+    .header = BTHEADER(sizeof(s_btrequest) - 4, \
+                       BTTYPE_REQUEST),         \
+    .index = htonl(Index),                      \
+    .begin = htonl(Begin),                      \
+    .length = htonl(Length),                    \
+  }
+
+
 
 typedef union
 {
   s_btheader header;
+  s_btrequest request;
   s_bthandshake handshake;
   uint32_t have_id;
 } u_btbuf;
