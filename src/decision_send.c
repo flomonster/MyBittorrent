@@ -56,6 +56,21 @@ static bool setup_piece(s_torrent *tor, s_peer_conn *conn,
 }
 
 
+static void log_block_requests(s_torrent *tor, s_peer_conn *conn, size_t count)
+{
+  for (size_t i = 0; i < count; i++)
+  {
+    s_btrequest *req = &conn->out_buf.requests[i];
+    if (btlog_active(L_SNETDBG))
+    {
+      char *pf = peer_format(conn->peer);
+      LOG(L_SNETDBG, "msg: send", tor, "%s: request: %zu %zu %zu",
+          pf, ntohl(req->index), ntohl(req->begin), ntohl(req->length));
+      free(pf);
+    }
+  }
+}
+
 static bool send_block_requests(s_torrent *tor, s_peer_conn *conn,
                                 s_trans *trans)
 {
@@ -82,11 +97,11 @@ static bool send_block_requests(s_torrent *tor, s_peer_conn *conn,
   if (!curblk)
     return has_missing;
 
-  conn->ask_blocks = false;
+  log_block_requests(tor, conn, curblk);
   conn->last_req_tick = tor->stats.tick;
   trans_setup(trans, decision_send, &conn->out_buf.requests,
               sizeof(s_btrequest) * curblk);
-  return true;
+  return !(conn->ask_blocks = false); // line count hack
 }
 
 
