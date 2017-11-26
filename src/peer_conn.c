@@ -84,10 +84,10 @@ void peer_conn_init(s_peer_conn *conn, s_torrent *tor, s_poller *pol)
   conn->peer = p;
   conn->active = true;
 
-  if (btlog_active(L_SINFO))
+  if (btlog_active(L_SNETDBG))
   {
     char *pf = peer_format(p);
-    LOG(L_SINFO, "peers", tor, "connect: %s", pf);
+    LOG(L_SNETDBG, "peers", tor, "connect: %s", pf);
     free(pf);
   }
 
