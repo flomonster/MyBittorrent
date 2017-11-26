@@ -30,7 +30,8 @@ bool event_loop(s_torrent *tor)
       else
         peer_conn_init(&peer_conns[i], tor, &poller);
     tor->stats.tick++;
-  } while (g_running && !poller_update(&poller, tor, TIMEOUT));
+  } while (tor->state == T_RUNNING && g_running
+           && !poller_update(&poller, tor, TIMEOUT));
 
   if (!g_running)
     LOG(L_WARN, "eloop", tor, "event loop killed by signal");
