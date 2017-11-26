@@ -6,10 +6,10 @@ This is the list of features to implement:
     * [x] Option dump-peers
   * Option verbose
     * [x] Tracker request
-    * [ ] Peer connection / disconnection
-    * [ ] Peer message
+    * [x] Peer connection / disconnection
+    * [x] Peer message
   * Leeching
-    * [ ] Networking backend
+    * [x] Networking backend
       * [x] Initial transmissions
         * [x] Sending side: header send
         * [x] Receiving side: header parse
@@ -20,7 +20,7 @@ This is the list of features to implement:
     * [ ] Tracker status update
     * [ ] Advertize piece availability
     * [ ] Buffering
-    * [ ] Investigate loop block request
+    * [x] Investigate loop block request
     * [ ] Close connection on mute peer
     * [ ] Uninteresting connection closing
   * [ ] Seeding
