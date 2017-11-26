@@ -79,6 +79,8 @@ s_piece *pieces_create(s_filelist *fl, s_bdata *info,
   struct data_loop dl = DATA_LOOP(0, 0, 0, true);
   for (size_t i = 0; i < fl->nbfiles && (dl.size += fl->files[i].size) + 1; i++)
   {
+    if (!fl->files[i].size)
+      continue;
     while (dl.size >= piece_size)
     {
       piece_init(pieces + dl.cur_piece, dl.piece_file, piece_size,
@@ -132,7 +134,8 @@ void *piece_get_buffer(s_torrent *tor, s_piece *piece, size_t offset,
   size_t f = piece->file;
   size_t piece_offset = (piece - tor->pieces) * tor->piece_size;
   offset += piece_offset - tor->filelist.files[f].offset;
-  while (offset > tor->filelist.files[f].size)
+  while (!(tor->filelist.files[f].size - offset)
+         || !tor->filelist.files[f].size || offset > tor->filelist.files[f].size)
   {
     offset -= tor->filelist.files[f].size;
     f++;
