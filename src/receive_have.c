@@ -12,9 +12,6 @@
 #include <stdlib.h>
 
 
-static const s_btlog_context *g_ctx = &LCTX(L_NETDBG, "receive_have");
-
-
 
 static inline t_trans_status receive_have_ack(struct torrent *tor,
                                               struct peer_conn *conn,
@@ -29,6 +26,13 @@ static inline t_trans_status receive_have_ack(struct torrent *tor,
   {
     LOG(L_ERR, "receive_have", tor, "have id out of bounds");
     return TRANS_CLOSING;
+  }
+
+  if (btlog_active(L_SNETDBG))
+  {
+    char *pf = peer_format(conn->peer);
+    LOG(L_SNETDBG, "msg: recv", tor, "%s: have: %zu", piece_id);
+    free(pf);
   }
 
   bitset_set(conn->peer->pieces, piece_id, true);
@@ -51,8 +55,6 @@ t_trans_status receive_have(struct torrent *tor, struct peer_conn *conn,
         "expected 4, got %zu", size);
     return TRANS_CLOSING;
   }
-
-  btlog(g_ctx, tor, "receiving a have message");
 
   trans_setup(trans, receive_have_ack, &conn->in_buf.have_id, 4);
   return TRANS_RETRY;

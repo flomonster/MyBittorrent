@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "handshake.h"
 #include "log.h"
@@ -16,6 +17,26 @@
   }
 
 
+void peer_conn_close(s_torrent *tor, s_peer_conn *conn)
+{
+  if (conn->peer)
+  {
+    if (conn->socket.fd != -1)
+      close(conn->socket.fd);
+
+    if (btlog_active(L_SNETDBG))
+    {
+      char *pf = peer_format(conn->peer);
+      LOG(L_SNETDBG, "peers", tor, "disconnect: %s", pf);
+      free(pf);
+    }
+
+    conn->peer->fail_count++;
+  }
+  peer_conn_clear(conn, false);
+}
+
+
 static void handle_transmission(s_trans *trans, s_peer_conn *conn,
                                 s_torrent *tor)
 {
@@ -29,16 +50,7 @@ static void handle_transmission(s_trans *trans, s_peer_conn *conn,
     break;
   case TRANS_ERROR:
   case TRANS_CLOSING:
-
-    if (btlog_active(L_SNETDBG))
-    {
-      char *pf = peer_format(conn->peer);
-      LOG(L_SNETDBG, "peers", tor, "disconnect: %s", pf);
-      free(pf);
-    }
-
-    conn->peer->fail_count++;
-    peer_conn_clear(conn, false);
+    peer_conn_close(tor, conn);
     break;
   }
 }

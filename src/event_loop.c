@@ -37,7 +37,7 @@ bool event_loop(s_torrent *tor)
     LOG(L_WARN, "eloop", tor, "event loop killed by signal");
 
   for (size_t i = 0; i < PEER_CONN_COUNT; i++)
-    peer_conn_free(&peer_conns[i]);
+    peer_conn_close(tor, &peer_conns[i]);
 
   poller_destroy(&poller);
   free(peer_conns);

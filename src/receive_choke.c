@@ -7,9 +7,10 @@
 #include "torrent.h"
 #include "transmission.h"
 
+#include <stdlib.h>
 
 
-static const s_btlog_context *g_ctx = &LCTX(L_LNETDBG, "receive_choke");
+static const s_btlog_context *g_ctx = &LCTX(L_SNETDBG, "msg: recv");
 
 
 t_trans_status receive_choke(struct torrent *tor, struct peer_conn *conn,
@@ -18,7 +19,13 @@ t_trans_status receive_choke(struct torrent *tor, struct peer_conn *conn,
   if (status != TRANS_DONE)
     return status;
 
-  btlog(g_ctx, tor, "receiving a choke message");
+  if (btlog_active(L_SNETDBG))
+  {
+    char *pf = peer_format(conn->peer);
+    btlog(g_ctx, tor, "%s: choke", pf);
+    free(pf);
+  }
+
   conn->state_am.choking = true;
 
   return receive_message(tor, conn, trans, status);
@@ -31,7 +38,13 @@ t_trans_status receive_unchoke(struct torrent *tor, struct peer_conn *conn,
   if (status != TRANS_DONE)
     return status;
 
-  btlog(g_ctx, tor, "receiving a unchoke message");
+  if (btlog_active(L_SNETDBG))
+  {
+    char *pf = peer_format(conn->peer);
+    btlog(g_ctx, tor, "%s: unchoke", pf);
+    free(pf);
+  }
+
   conn->state_am.choking = false;
 
   return receive_message(tor, conn, trans, status);

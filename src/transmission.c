@@ -29,7 +29,10 @@ static inline t_trans_status trans_callback(struct torrent *tor,
 t_trans_status trans_handle_error(s_peer_conn *conn, t_trans_status status)
 {
   if (status <= 0 && !(status == TRANS_RETRY || status == TRANS_DONE))
+  {
     close(conn->socket.fd);
+    conn->socket.fd = -1;
+  }
   return status;
 }
 

@@ -8,6 +8,7 @@
 #include "block.h"
 
 #include <assert.h>
+#include <stdlib.h>
 
 
 static bool update_interest(s_torrent *tor, s_peer_conn *conn,
@@ -17,6 +18,15 @@ static bool update_interest(s_torrent *tor, s_peer_conn *conn,
     return false;
 
   LOG(L_NETDBG, "decision_send", tor, "expressing our interest");
+
+
+  if (btlog_active(L_SNETDBG))
+  {
+    char *pf = peer_format(conn->peer);
+    LOG(L_SNETDBG, "msg: send", tor, "%s: %sinterested",
+        pf, interest ? "" : "not_");
+    free(pf);
+  }
 
   conn->state_am.interested = interest;
   conn->out_buf.header = BTSIMPLE(BTTYPE_INTERESTED + !interest);
