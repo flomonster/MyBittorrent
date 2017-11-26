@@ -19,11 +19,15 @@ static t_trans_status receive_piece_cleanup(s_torrent *tor,
                                             s_trans *trans,
                                             t_trans_status status)
 {
-  // we received all the data, exit
-  conn->ask_blocks = true;
-  LOG(L_LNETDBG, "receive_piece", tor, "received block %zu %zu",
-      PIECE_INDEX(conn->receiving.piece, tor), conn->receiving.block);
-  bitset_set(conn->blocks, conn->receiving.block, true);
+  s_btpiece *pbuf = &conn->in_buf.piece;
+  if (pbuf->index == PIECE_INDEX(conn->receiving.piece, tor))
+  {
+    // we received all the data, exit
+    conn->ask_blocks = true;
+    LOG(L_LNETDBG, "receive_piece", tor, "received block %zu %zu",
+        PIECE_INDEX(conn->receiving.piece, tor), conn->receiving.block);
+    bitset_set(conn->blocks, conn->receiving.block, true);
+  }
   return receive_message(tor, conn, trans, status);
 }
 
@@ -35,9 +39,10 @@ static t_trans_status receive_piece_iter(s_torrent *tor, s_peer_conn *conn,
   if (status != TRANS_DONE)
     return status;
 
+  s_btpiece *pbuf = &conn->in_buf.piece;
+  bool intended = pbuf->index == PIECE_INDEX(conn->receiving.piece, tor);
   LOG(L_LNETDBG, "receive_piece", tor, "receiving piece part");
 
-  s_btpiece *pbuf = &conn->in_buf.piece;
 
   if (!pbuf->header.size)
     return receive_piece_cleanup(tor, conn, trans, status);
@@ -48,11 +53,15 @@ static t_trans_status receive_piece_iter(s_torrent *tor, s_peer_conn *conn,
     return TRANS_CLOSING; // TODO: make the caller cleanup
   }
 
-  s_piece *piece = &tor->pieces[pbuf->index];
-  size_t size; // what we shall write
-  void *buf = piece_get_buffer(tor, piece, conn->in_buf.piece.begin, &size);
-  size_t remaining = pbuf->header.size; // remaining data
-  size_t readsize = MIN(size, remaining);
+  void *buf = NULL;
+  size_t readsize = pbuf->header.size;
+  if (intended)
+  {
+    s_piece *piece = &tor->pieces[pbuf->index];
+    size_t size; // what we shall write
+    buf = piece_get_buffer(tor, piece, conn->in_buf.piece.begin, &size);
+    readsize = MIN(size, readsize);
+  }
   pbuf->header.size -= readsize;
   pbuf->begin += readsize;
   trans_setup(trans, receive_piece_iter, buf, readsize);
@@ -71,10 +80,8 @@ static t_trans_status receive_piece_conv(s_torrent *tor, s_peer_conn *conn,
   btp->begin = ntohl(btp->begin);
 
   if (btp->index != PIECE_INDEX(conn->receiving.piece, tor))
-  { // TODO: might cause a race
-    LOG(L_WARN, "receive_piece", tor, "host sent a block he wasn't asked for");
-    return TRANS_CLOSING;
-  }
+    LOG(L_WARN, "receive_piece", tor, "host sent a block he wasn't "
+        "asked for: %zu, %zu", btp->index, btp->begin);
 
   conn->receiving.block = btp->begin / MAX_BLOCK_SIZE;
   if (conn->receiving.block >= conn->receiving.piece->block_count)

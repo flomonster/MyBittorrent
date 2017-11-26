@@ -35,6 +35,7 @@ static bool setup_piece(s_torrent *tor, s_peer_conn *conn,
   LOG(L_NETDBG, "decision_send", tor, "chose piece %zu",
       PIECE_INDEX(conn->receiving.piece, tor));
 
+  conn->receiving.piece->state = PIECE_FETCHING;
   update_interest(tor, conn, trans, true);
   conn->ask_blocks = true;
   bitset_free(conn->blocks);

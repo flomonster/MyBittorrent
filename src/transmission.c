@@ -41,7 +41,8 @@ t_trans_status transmit(s_trans *trans, struct peer_conn *conn,
   {
     ssize_t res = trans->transmitter(&conn->socket,
                                      trans->buf + trans->transmitted,
-                                     trans->total - trans->transmitted);
+                                     trans->total - trans->transmitted,
+                                     trans->trunc * MSG_TRUNC);
     if (res <= 0)
     {
       if (res == TRANS_RETRY)
@@ -61,6 +62,7 @@ t_trans_status transmit(s_trans *trans, struct peer_conn *conn,
 void trans_setup(s_trans *trans, f_trans_callback callback,
                  void *buf, size_t size)
 {
+  trans->trunc = !buf;
   trans->callback = callback;
   trans->buf = buf;
   trans->total = size;

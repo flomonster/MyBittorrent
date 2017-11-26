@@ -93,8 +93,11 @@ void peer_conn_free(s_peer_conn *conn)
 
 void peer_conn_clear(s_peer_conn *conn, bool active)
 {
+  if (conn->receiving.piece)
+    conn->receiving.piece->state = PIECE_MISSING;
   if (conn->peer)
     conn->peer->conn = NULL;
+
   memset(conn, 0, sizeof(*conn));
   conn->state_am = PEER_STATE(true, false);
   conn->state_peer = PEER_STATE(true, false);

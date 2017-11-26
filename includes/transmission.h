@@ -41,10 +41,11 @@ typedef struct trans
   size_t transmitted;
   size_t total;
   char *buf;
+  bool trunc;
 
   // on -2, wait, on -1, exit, on 0, end the trans,
   // when positive, update transmitted
-  ssize_t (*transmitter)(s_pollfd *state, char *buf, size_t size);
+  ssize_t (*transmitter)(s_pollfd *state, char *buf, size_t size, int opt);
 
   // when all data is transmitted, call back
   f_trans_callback callback;
@@ -61,5 +62,5 @@ void trans_setup(s_trans *trans, f_trans_callback callback,
 t_trans_status transmit(s_trans *trans, struct peer_conn *conn,
                         struct torrent *tor);
 
-ssize_t pollfd_send(s_pollfd *pdf, char *buf, size_t size);
-ssize_t pollfd_recv(s_pollfd *pdf, char *buf, size_t size);
+ssize_t pollfd_send(s_pollfd *pdf, char *buf, size_t size, int opt);
+ssize_t pollfd_recv(s_pollfd *pdf, char *buf, size_t size, int opt);
