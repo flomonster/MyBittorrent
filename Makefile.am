@@ -1,10 +1,10 @@
 ACLOCAL_AMFLAGS = -I m4
 
 bin_PROGRAMS = my-bittorrent
-lib_LTLIBRARIES = libtorrent.la
+lib_LTLIBRARIES = libmytorrent.la
 
-libtorrent_la_LIBADD = -lcurl -lcrypto
-libtorrent_la_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
+libmytorrent_la_LIBADD = -lcurl -lcrypto
+libmytorrent_la_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/dbuf.c includes/bencode.h \
                         includes/dbuf.h includes/file.h includes/filelist.h \
                         src/piece.c includes/piece.h \
@@ -48,7 +48,7 @@ check-local:
 	$(srcdir)/tests/check.sh
 
 
-my_bittorrent_LDADD = libtorrent.la
+my_bittorrent_LDADD = libmytorrent.la
 my_bittorrent_SOURCES = src/bittorrent.c
 
 AM_CPPFLAGS = -iquote includes -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE

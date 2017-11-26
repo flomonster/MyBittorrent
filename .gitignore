@@ -2,7 +2,7 @@
 *.swp
 *~
 \#*\#
-
+1;5002;0c
 # BIN
 *.o
 *.a
@@ -22,7 +22,11 @@ aclocal.m4
 /my-bittorrent
 /stamp-h1
 /compile
-
+/m4
+/.libs
+/ar-lib
+/libtool
+/ltmain.sh
 *.cache
 *.deps
 *.dirstamp
