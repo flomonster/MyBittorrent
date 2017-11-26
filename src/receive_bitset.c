@@ -19,9 +19,11 @@ static inline t_trans_status receive_bitset_ack(struct torrent *tor,
 {
   if (btlog_active(L_SNETDBG))
   {
+    char *pf = peer_format(conn->peer);
     char *buf = bitset_to_string(conn->peer->pieces); // TODO: error handling
-    LOG(L_SNETDBG, "receive_bitset", tor, "received bitset: %s", buf);
+    LOG(L_SNETDBG, "msg: recv", tor, "%s: bitfield: %s", pf, buf);
     free(buf);
+    free(pf);
   }
 
   conn->pieces_changed = true;

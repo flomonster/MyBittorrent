@@ -23,3 +23,4 @@ bool bitset_get(s_bitset *bset, size_t i);
 void bitset_set(s_bitset *bset, size_t i, bool val);
 void bitset_free(s_bitset *bset);
 char *bitset_to_string(s_bitset *bitset);
+void bitset_clear(s_bitset *bitset);

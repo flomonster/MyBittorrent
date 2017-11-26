@@ -38,9 +38,11 @@ my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/receive_choke.c includes/receive_choke.h \
                         src/receive_piece.c includes/receive_piece.h \
                         src/signal_handler.c includes/signal_handler.h \
-                        src/btstats.c includes/btstats.h
+                        src/btstats.c includes/btstats.h \
+                        src/bitset_clear.c
 
 
 
 AM_CPPFLAGS = -iquote includes -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE
-AM_CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic
+AM_CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic #-fsanitize=address
+# AM_LDFLAGS = -fsanitize=address

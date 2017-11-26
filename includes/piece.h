@@ -34,6 +34,8 @@ typedef struct piece
 } s_piece;
 
 
+bool piece_check(s_piece *pieces, s_filelist *filelist,
+                 size_t piece, size_t piece_size);
 s_piece *pieces_create(s_filelist *filelist, s_bdata *info,
                        size_t nbpieces, size_t piece_size);
 void *piece_get_buffer(struct torrent *tor, s_piece *piece,

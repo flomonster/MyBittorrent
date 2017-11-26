@@ -1,16 +1,32 @@
-#include "log.h"
+#include "bitset.h"
+#include "block.h"
 #include "btproto.h"
+#include "log.h"
+#include "mathutils.h"
 #include "peer_conn.h"
+#include "receive_message.h"
 #include "torrent.h"
 #include "transmission.h"
-#include "receive_message.h"
-#include "bitset.h"
-#include "mathutils.h"
 
 #include "receive_piece.h"
 
 #include <stdint.h>
 #include <stdlib.h>
+
+
+static t_trans_status receive_piece_cleanup(s_torrent *tor,
+                                            s_peer_conn *conn,
+                                            s_trans *trans,
+                                            t_trans_status status)
+{
+  // we received all the data, exit
+  conn->ask_blocks = true;
+  LOG(L_LNETDBG, "receive_piece", tor, "received block %zu %zu",
+      PIECE_INDEX(conn->receiving.piece, tor), conn->receiving.block);
+  bitset_set(conn->blocks, conn->receiving.block, true);
+  return receive_message(tor, conn, trans, status);
+}
+
 
 
 static t_trans_status receive_piece_iter(s_torrent *tor, s_peer_conn *conn,
@@ -24,14 +40,9 @@ static t_trans_status receive_piece_iter(s_torrent *tor, s_peer_conn *conn,
   s_btpiece *pbuf = &conn->in_buf.piece;
 
   if (!pbuf->header.size)
-  {
-    // we received all the data, exit
-    conn->ask_blocks = true;
-    return receive_message(tor, conn, trans, status);
-  }
+    return receive_piece_cleanup(tor, conn, trans, status);
 
-  if (pbuf->index >= tor->nbpieces
-    || pbuf->header.size + pbuf->begin > tor->pieces[pbuf->index].size)
+  if (pbuf->header.size + pbuf->begin > tor->pieces[pbuf->index].size)
   {
     LOG(L_WARN, "receive_piece", tor, "received OOB piece");
     return TRANS_CLOSING; // TODO: make the caller cleanup
@@ -58,6 +69,28 @@ static t_trans_status receive_piece_conv(s_torrent *tor, s_peer_conn *conn,
   s_btpiece *btp = &conn->in_buf.piece;
   btp->index = ntohl(btp->index);
   btp->begin = ntohl(btp->begin);
+
+  if (btp->index != PIECE_INDEX(conn->receiving.piece, tor))
+  { // TODO: might cause a race
+    LOG(L_WARN, "receive_piece", tor, "host sent a block he wasn't asked for");
+    return TRANS_CLOSING;
+  }
+
+  conn->receiving.block = btp->begin / MAX_BLOCK_SIZE;
+  if (conn->receiving.block >= conn->receiving.piece->block_count)
+  {
+    LOG(L_WARN, "receive_piece", tor, "host sent an OOB block");
+    return TRANS_CLOSING;
+  }
+
+  if (btlog_active(L_SNETDBG))
+  {
+    char *pf = peer_format(conn->peer);
+    LOG(L_SNETDBG, "msg: recv", tor, "%s: piece %zu %zu",
+        pf, btp->index, btp->begin);
+    free(pf);
+  }
+
   return receive_piece_iter(tor, conn, trans, status);
 }
 
@@ -74,8 +107,6 @@ t_trans_status receive_piece(s_torrent *tor, s_peer_conn *conn,
     LOG(L_WARN, "receive_piece", tor, "message size too small");
     return TRANS_CLOSING;
   }
-
-  LOG(L_LNETDBG, "receive_piece", tor, "starting to receive some piece");
 
   s_btpiece *btp = &conn->in_buf.piece;
   btp->header.size -= 8;

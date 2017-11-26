@@ -43,15 +43,16 @@ typedef struct peer_conn
   s_trans in_trans;
   s_trans out_trans;
 
-  u_btbuf in_buf;
-  u_btbuf out_buf;
-
   // if true, decision_send will ask for new blocks
   bool ask_blocks;
 
   // the tick of the last send block request
   size_t last_req_tick;
   s_bitset *blocks;
+  s_bitset *req_blocks;
+
+  u_btbuf out_buf;
+  u_btbuf in_buf;
 } s_peer_conn;
 
 

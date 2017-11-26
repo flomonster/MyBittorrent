@@ -69,6 +69,7 @@ void *path_map(s_path *path, size_t size, int dir_fd, bool *exist)
     return res == MAP_FAILED ? NULL : res;
   }
 
+  mkdirat(dir_fd, path->name, 0750);
   int next_fd = openat(dir_fd, path->name, O_DIRECTORY, 0750);
   if (next_fd < 0)
     return NULL;

@@ -40,8 +40,8 @@ static void piece_init(s_piece *piece, size_t file, size_t size, char *sha)
 }
 
 
-static void piece_check(s_piece *pieces, s_filelist *filelist,
-                        size_t piece, size_t piece_size)
+bool piece_check(s_piece *pieces, s_filelist *filelist,
+                 size_t piece, size_t piece_size)
 {
   size_t off = piece * piece_size;
   size_t target = off + pieces[piece].size;
@@ -64,8 +64,10 @@ static void piece_check(s_piece *pieces, s_filelist *filelist,
   unsigned char piece_sha[SHA_DIGEST_LENGTH];
   void *md = piece_sha;
   SHA1_Final(md, &c);
-  if (!memcmp(md, pieces[piece].sha, 20))
+  bool ret;
+  if ((ret = !memcmp(md, pieces[piece].sha, 20)))
     pieces[piece].state = PIECE_AVAILABLE;
+  return ret;
 }
 
 

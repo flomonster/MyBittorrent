@@ -3,7 +3,7 @@
 #include "transmission.h"
 
 
-#define BLOCK_REQUEST_TIMEOUT 3000
+#define BLOCK_REQUEST_TIMEOUT 400
 
 
 t_trans_status decision_send(struct torrent *tor, struct peer_conn *conn,

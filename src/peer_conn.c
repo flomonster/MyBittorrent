@@ -29,7 +29,14 @@ static void handle_transmission(s_trans *trans, s_peer_conn *conn,
     break;
   case TRANS_ERROR:
   case TRANS_CLOSING:
-    LOG(L_NETDBG, "event_loop", tor, "closed connection");
+
+    if (btlog_active(L_SNETDBG))
+    {
+      char *pf = peer_format(conn->peer);
+      LOG(L_SNETDBG, "peers", tor, "disconnect: %s", pf);
+      free(pf);
+    }
+
     conn->peer->fail_count++;
     peer_conn_clear(conn, false);
     break;
@@ -65,10 +72,10 @@ void peer_conn_init(s_peer_conn *conn, s_torrent *tor, s_poller *pol)
   conn->peer = p;
   conn->active = true;
 
-  if (btlog_active(L_INFO))
+  if (btlog_active(L_SINFO))
   {
     char *pf = peer_format(p);
-    LOG(L_INFO, "peer_conn", tor, "peer connection activated -> %s", pf);
+    LOG(L_SINFO, "peers", tor, "connect: %s", pf);
     free(pf);
   }
 
@@ -80,6 +87,7 @@ void peer_conn_init(s_peer_conn *conn, s_torrent *tor, s_poller *pol)
 void peer_conn_free(s_peer_conn *conn)
 {
   bitset_free(conn->blocks);
+  bitset_free(conn->req_blocks);
 }
 
 
