@@ -1,0 +1,36 @@
+# Introduction
+
+MyBittorrent is a barebone torrent client aiming at providing a basic
+implementation of the bittorrent protocol, using a sane project architecture.
+
+
+# Installing
+
+You can build the project using:
+
+```sh
+./bootstrap
+./configure
+make
+```
+
+You may install it using:
+
+```
+make install
+```
+
+
+# Usage
+
+```sh
+$ ./my-bittorrent --help
+Usage: my-bittorrent [--verbose] [--seed] COMMAND
+where  COMMAND := { --dump-peers | --pretty-print-torrent-file | { torrents } }
+```
+
+`--dump-peers` prints the initial list of peers returned by the tracker
+
+`--pretty-print-torrent-file` prints a JSON dump of the bencoded torrent file
+
+Beware that seeding isn't yet implemented.
