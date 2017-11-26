@@ -36,7 +36,7 @@ static void piece_init(s_piece *piece, size_t file, size_t size, char *sha)
   piece->state = PIECE_MISSING;
   piece->size = size;
   piece->block_count = REQUIRED_BLOCKS(size);
-  strncpy(piece->sha, sha, 20);
+  memcpy(piece->sha, sha, 20);
 }
 
 
@@ -50,22 +50,20 @@ bool piece_check(s_piece *pieces, s_filelist *filelist,
   SHA_CTX c;
   SHA1_Init(&c);
 
-  while (sfile < target)
-  {
-    char *data = filelist->files[file].data;
-    size_t filesize = filelist->files[file].size;
-    size_t start = MAX(sfile, off);
-    size_t end = MIN(target, sfile + filesize);
-    SHA1_Update(&c, data + start - filelist->files[file].offset, end - start);
-    sfile += filesize;
-    file++;
-  }
+  for (size_t filesize; sfile < target; file++)
+    if ((filesize = filelist->files[file].size))
+    {
+      char *data = filelist->files[file].data;
+      size_t start = MAX(sfile, off);
+      size_t end = MIN(target, sfile + filesize);
+      SHA1_Update(&c, data + start - filelist->files[file].offset, end - start);
+      sfile += filesize;
+    }
 
   unsigned char piece_sha[SHA_DIGEST_LENGTH];
-  void *md = piece_sha;
-  SHA1_Final(md, &c);
+  SHA1_Final(piece_sha, &c);
   bool ret;
-  if ((ret = !memcmp(md, pieces[piece].sha, 20)))
+  if ((ret = !memcmp(piece_sha, pieces[piece].sha, 20)))
     pieces[piece].state = PIECE_AVAILABLE;
   return ret;
 }
