@@ -60,9 +60,9 @@ static bool send_block_requests(s_torrent *tor, s_peer_conn *conn,
         continue; // ignore already requested blocks
 
       bitset_set(conn->req_blocks, i, true);
-      conn->out_buf.requests[i] = BTREQUEST(piece_index,
-                                            i * MAX_BLOCK_SIZE,
-                                            BLOCK_SIZE(piece_size, i));
+      conn->out_buf.requests[curblk] = BTREQUEST(piece_index,
+                                                 i * MAX_BLOCK_SIZE,
+                                                 BLOCK_SIZE(piece_size, i));
       curblk++;
     }
 
