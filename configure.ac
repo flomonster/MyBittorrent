@@ -5,6 +5,9 @@ AC_INIT([My Bittorrent], [1.0], [], [my-bittorrent], [acu.epita.fr])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
 
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+
+LT_INIT
 AC_PROG_CC_C99
 
 AX_CHECK_OPENSSL()

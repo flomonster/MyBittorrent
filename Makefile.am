@@ -1,12 +1,13 @@
 ACLOCAL_AMFLAGS = -I m4
 
 bin_PROGRAMS = my-bittorrent
+lib_LTLIBRARIES = libtorrent.la
 
-my_bittorrent_LDADD = -lcurl -lcrypto
-my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
+libtorrent_la_LIBADD = -lcurl -lcrypto
+libtorrent_la_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/dbuf.c includes/bencode.h \
                         includes/dbuf.h includes/file.h includes/filelist.h \
-                        src/piece.c includes/piece.h src/bittorrent.c \
+                        src/piece.c includes/piece.h \
                         src/btopts.c includes/btopts.h includes/fmap.h \
                         src/fmap.c includes/metainfo.h src/metainfo.c \
                         src/peer.c includes/peer.h \
@@ -41,7 +42,14 @@ my_bittorrent_SOURCES = src/bencode.c src/bencode_utils.c src/bencode_print.c \
                         src/btstats.c includes/btstats.h \
                         src/bitset_clear.c
 
+EXTRA_DIST = $(srcdir)/tests
 
+check-local:
+	$(srcdir)/tests/check.sh
+
+
+my_bittorrent_LDADD = libtorrent.la
+my_bittorrent_SOURCES = src/bittorrent.c
 
 AM_CPPFLAGS = -iquote includes -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE
 AM_CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic #-fsanitize=address

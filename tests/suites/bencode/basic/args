@@ -1,0 +1,2 @@
+args_ref=( cat "$test_path"/ref_out )
+args=( --pretty-print-torrent-file "$base_tests"/torrents/images_basic.torrent)

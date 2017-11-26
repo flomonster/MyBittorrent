@@ -27,3 +27,5 @@ aclocal.m4
 *.deps
 *.dirstamp
 *.in
+*.lo
+*.la
