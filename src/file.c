@@ -12,9 +12,9 @@ bool file_init(s_file *file, s_path *path, size_t size, size_t offset)
   file->size = size;
   file->offset = offset;
   file->path = path;
-  if (!size)
-    return (file->data = NULL);
   file->data = path_map(path, size, AT_FDCWD, &file->exist);
+  if (!size)
+    return file->data;
   return file->data == NULL;
 }
 
