@@ -18,6 +18,10 @@ This is the list of features to implement:
     * [x] Multi-files torrents
     * [ ] Stats
     * [ ] Tracker status update
+    * [ ] Advertize piece availability
+    * [ ] Buffering
+    * [ ] Investigate loop block request
+    * [ ] Close connection on mute peer
     * [ ] Uninteresting connection closing
   * [ ] Seeding
 * Advanced features
